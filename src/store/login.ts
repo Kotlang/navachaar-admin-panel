@@ -24,7 +24,10 @@ const useLoginStore = create<ILogin>()(
                         return { ...state, emailOrPhone };
                     });
                 },
-            })
+            }),
+            {
+                name: "login"
+            }
         ),
     ),
 );

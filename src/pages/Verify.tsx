@@ -1,10 +1,12 @@
 import { Button } from 'antd';
 import React, { useState } from 'react'
 import OtpInput from 'react-otp-input';
+import { useNavigate } from 'react-router-dom';
 import { getLoginClient, getVerifyRequest } from '../clients/login';
 import { useLoginStore } from '../store';
 
 const VerifyPage = () => {
+  const navigate = useNavigate();
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const { emailOrPhone, setAuthHeader } = useLoginStore(({ emailOrPhone, setAuthHeader }) => ({ 
@@ -57,6 +59,7 @@ const VerifyPage = () => {
                 } else {
                   setLoading(false);
                   setAuthHeader(response.getJwt());
+                  navigate("/");
                 }
               })
             }}

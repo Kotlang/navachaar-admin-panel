@@ -1,5 +1,5 @@
 import { Button, Form, Input } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { getLoginClient, getLoginRequest } from '../clients/login';
 import { useLoginStore } from '../store';
@@ -7,13 +7,15 @@ import { useLoginStore } from '../store';
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { authHeader, setEmailOrPhone } = useLoginStore(({ authHeader, setEmailOrPhone }) => ({ 
+  const { authHeader, setEmailOrPhone } = useLoginStore(({ authHeader, setEmailOrPhone }) => ({
     authHeader, setEmailOrPhone 
   }));
-
-  if (authHeader) {
-    navigate("/");
-  }
+  useEffect(() => {
+      if (authHeader) {
+        navigate("/");
+      }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authHeader]);
   return (
     <section className='flex items-center justify-center min-h-screen'>
       <Form

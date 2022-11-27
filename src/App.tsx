@@ -20,8 +20,8 @@ function App() {
     }
   }
   return (
-    <div>
-      <button onClick={grpcCall}>Click</button>
+    <div className='bg-red-500'>
+      <button className='bg-blue-500 text-white' onClick={grpcCall}>Click</button>
     </div>
   );
 }

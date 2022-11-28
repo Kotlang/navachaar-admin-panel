@@ -3,8 +3,10 @@ import { devtools, persist } from 'zustand/middleware'
 
 interface ILogin {
     authHeader: string;
+    loginId: string;
     emailOrPhone: string;
     setAuthHeader: (authHeader: string) => void;
+    setLoginId: (loginId: string) => void;
     setEmailOrPhone: (emailOrPhone: string) => void;
 }
 
@@ -12,11 +14,17 @@ const useLoginStore = create<ILogin>()(
     devtools(
         persist(
             (set) => ({
-                authHeader: '',
                 emailOrPhone: '',
+                authHeader: '',
+                loginId: '',
                 setAuthHeader: (authHeader) => {
                     set((state) => {
                         return { ...state, authHeader };
+                    });
+                },
+                setLoginId: (loginId) => {
+                    set((state) => {
+                        return { ...state, loginId };
                     });
                 },
                 setEmailOrPhone: (emailOrPhone) => {

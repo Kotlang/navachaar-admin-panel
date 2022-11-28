@@ -9,9 +9,10 @@ const VerifyPage = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
-  const { emailOrPhone, setAuthHeader } = useLoginStore(({ emailOrPhone, setAuthHeader }) => ({ 
+  const { emailOrPhone, setAuthHeader, setLoginId } = useLoginStore(({ emailOrPhone, setAuthHeader, setLoginId }) => ({ 
     emailOrPhone,
-    setAuthHeader
+    setAuthHeader,
+    setLoginId
   }));
   return (
     <section className='flex flex-col gap-y-5 items-center justify-center min-h-screen'>
@@ -59,6 +60,7 @@ const VerifyPage = () => {
                 } else {
                   setLoading(false);
                   setAuthHeader(response.getJwt());
+                  setLoginId(response.getProfile()?.getLoginid() || '');
                   navigate("/");
                 }
               })

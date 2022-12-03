@@ -46,7 +46,7 @@ const Sidebar = () => {
     <div className="flex max-h-screen min-h-[92.5vh]">
       <Sider
         style={{ backgroundColor: "white" }}
-        collapsed={windowSize.innerWidth < 700}
+        collapsed={collapsed < 700}
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="logo" />

@@ -1,23 +1,25 @@
-import { Button } from 'antd';
-import React, { useState } from 'react'
-import OtpInput from 'react-otp-input';
-import { useNavigate } from 'react-router-dom';
-import { getLoginClient, getVerifyRequest } from '../clients/login';
-import { useLoginStore } from '../store';
+import { Button } from "antd";
+import React, { useState } from "react";
+import OtpInput from "react-otp-input";
+import { useNavigate } from "react-router-dom";
+import { getLoginClient, getVerifyRequest } from "../clients/login";
+import { useLoginStore } from "../store";
 
 const VerifyPage = () => {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const { emailOrPhone, setAuthHeader, setLoginId } = useLoginStore(({ emailOrPhone, setAuthHeader, setLoginId }) => ({ 
-    emailOrPhone,
-    setAuthHeader,
-    setLoginId
-  }));
+  const { emailOrPhone, setAuthHeader, setLoginId } = useLoginStore(
+    ({ emailOrPhone, setAuthHeader, setLoginId }) => ({
+      emailOrPhone,
+      setAuthHeader,
+      setLoginId,
+    })
+  );
   return (
-    <section className='flex flex-col gap-y-5 items-center justify-center min-h-screen'>
-      <div className='flex flex-col gap-y-2 -mt-20'>
-        <h2 className='text-lg md:text-2xl font-medium text-gray-600'>
+    <section className="flex flex-col gap-y-5 items-center justify-center min-h-screen">
+      <div className="flex flex-col gap-y-2 -mt-20">
+        <h2 className="text-lg md:text-2xl font-medium text-gray-600">
           Enter OTP
         </h2>
         <OtpInput
@@ -27,7 +29,7 @@ const VerifyPage = () => {
           separator={<span style={{ width: "8px" }}></span>}
           isInputNum={true}
           shouldAutoFocus={true}
-          containerStyle='bg-gray-200 p-5 rounded-md'
+          containerStyle="bg-gray-200 p-5 rounded-md"
           inputStyle={{
             border: "1px solid transparent",
             borderRadius: "8px",
@@ -36,41 +38,45 @@ const VerifyPage = () => {
             fontSize: "16px",
             color: "#000",
             fontWeight: "400",
-            caretColor: "blue"
+            caretColor: "blue",
           }}
           focusStyle={{
             border: "1px solid #CFD3DB",
             outline: "none",
-            color: "#000"
+            color: "#000",
           }}
         />
       </div>
       <div className="flex justify-center items-center">
-					<Button
-						loading={loading}
-						htmlType="button"
-						size="large"
-						className="w-36 rounded-md outline-none border-none bg-black text-white hover:text-white"
-            onClick={() => {
-              setLoading(true);
-              const loginClient = getLoginClient();
-              loginClient.verify(getVerifyRequest(emailOrPhone, otp), {}, (err, response) => {
+        <Button
+          loading={loading}
+          htmlType="button"
+          size="large"
+          className="w-36 rounded-md outline-none border-none bg-black text-white hover:text-white"
+          onClick={() => {
+            setLoading(true);
+            const loginClient = getLoginClient();
+            loginClient.verify(
+              getVerifyRequest(emailOrPhone, otp),
+              {},
+              (err, response) => {
                 if (err) {
                   console.error(err);
                 } else {
                   setLoading(false);
                   setAuthHeader(response.getJwt());
-                  setLoginId(response.getProfile()?.getLoginid() || '');
-                  navigate("/");
+                  setLoginId(response.getProfile()?.getLoginid() || "");
+                  navigate("/dashboard");
                 }
-              })
-            }}
-					>
-            Submit
-					</Button>
-				</div>
+              }
+            );
+          }}
+        >
+          Submit
+        </Button>
+      </div>
     </section>
-  )
-}
+  );
+};
 
-export default VerifyPage
+export default VerifyPage;

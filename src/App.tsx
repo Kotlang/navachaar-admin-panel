@@ -2,9 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import 'react-toastify/dist/ReactToastify.css';
+
 import { ConfigProvider } from 'antd';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { antdTheme } from 'src/themes/antdTheme';
 import { styledTheme } from 'src/themes/styledTheme';
 import { ThemeProvider } from 'styled-components';
@@ -18,6 +21,7 @@ function App() {
 			<ConfigProvider theme={antdTheme}>
 				<ThemeProvider theme={styledTheme}>
 					<GlobalStyle />
+					<ToastContainer />
 					<AppLayout />
 				</ThemeProvider>
 			</ConfigProvider>

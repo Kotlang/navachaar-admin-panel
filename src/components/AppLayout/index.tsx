@@ -2,7 +2,9 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Drawer, Layout } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useLoginStore } from 'src/store';
 import styled from 'styled-components';
 
 import Footer from './Footer';
@@ -14,39 +16,53 @@ const { Content, Sider } = Layout;
 
 const AppLayout = ({ className }: { className?: string }) => {
 	const [sideDrawer, setSideDrawer] = useState(false);
+
+	const navigate = useNavigate();
+	const { authHeader } = useLoginStore(({ authHeader }) => ({
+		authHeader
+	}));
+
+	useEffect(() => {
+		if (authHeader.trim().length === 0) {
+			navigate('/login');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [authHeader]);
 	return (
 		<Layout className={className}>
-			<NavHeader setSideDrawer={setSideDrawer} sideDrawer={sideDrawer} />
-			<Layout hasSider className='relative'>
-				<Sider
-					trigger={null}
-					collapsible={false}
-					collapsed={false}
-					className={'hidden overflow-y-hidden sidebar bg-white lg:block top-0 bottom-0 left-0 h-screen z-100 w-full max-w-[200px] sider-shadow'}
-					style={{
-						position: 'fixed'
-					}}
-				>
-					<Menu />
-				</Sider>
-				<Drawer
-					placement='left'
-					closable={false}
-					onClose={() => setSideDrawer(false)}
-					open={sideDrawer}
-					getContainer={false}
-					className='w-full max-w-[200px] p-0'
-				>
-					<Menu />
-				</Drawer>
-				<Layout className='min-h flex flex-row p-0'>
-					<div className='hidden lg:block w-full max-w-[200px]'></div>
-					<Content className='bg-purple_app_bg p-8'>
-						<SwitchRoutes/>
-					</Content>
+			{authHeader.trim().length === 0 ? <SwitchRoutes /> : <>
+				<NavHeader setSideDrawer={setSideDrawer} sideDrawer={sideDrawer} />
+				<Layout hasSider className='relative'>
+					<Sider
+						trigger={null}
+						collapsible={false}
+						collapsed={false}
+						className={'hidden overflow-y-hidden sidebar bg-white lg:block top-0 bottom-0 left-0 h-screen z-100 w-full max-w-[200px] sider-shadow'}
+						style={{
+							position: 'fixed'
+						}}
+					>
+						<Menu />
+					</Sider>
+					<Drawer
+						placement='left'
+						closable={false}
+						onClose={() => setSideDrawer(false)}
+						open={sideDrawer}
+						getContainer={false}
+						className='w-full max-w-[200px] p-0'
+					>
+						<Menu />
+					</Drawer>
+					<Layout className='min-h flex flex-row p-0'>
+						<div className='hidden lg:block w-full max-w-[200px]'></div>
+						<Content className='bg-purple_app_bg p-8'>
+							<SwitchRoutes/>
+						</Content>
+					</Layout>
 				</Layout>
-			</Layout>
-			<Footer/>
+				<Footer/>
+			</>}
 		</Layout>
 	);
 };

@@ -2,12 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React from 'react';
-import VerifyPage from 'src/pages/Verify';
 
-const Verify = () => {
+const Home = () => {
 	return (
-		<VerifyPage />
+		<div>Home</div>
 	);
 };
 
-export default Verify;
+export default Home;

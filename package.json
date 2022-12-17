@@ -10,7 +10,8 @@
     "@types/node": "^16.18.3",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
-    "antd": "^5.0.2",
+    "antd": "^5.0.4",
+    "classnames": "^2.3.2",
     "google-protobuf": "^3.21.2",
     "grpc-web": "^1.4.2",
     "immer": "^9.0.16",
@@ -20,6 +21,7 @@
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.1.1",
+    "styled-components": "^5.3.6",
     "typescript": "^4.9.3",
     "web-vitals": "^2.1.4",
     "zustand": "^4.1.4"
@@ -52,8 +54,10 @@
   },
   "devDependencies": {
     "@types/antd": "^1.0.0",
+    "@types/classnames": "^2.3.1",
     "@types/react-is": "^17.0.3",
     "@types/react-otp-input": "^2.0.1",
+    "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "autoprefixer": "^10.4.13",
@@ -66,7 +70,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^8.0.0",
     "eslint-plugin-standard": "^5.0.0",
-    "postcss": "^8.4.19",
+    "postcss": "^8.4.20",
     "tailwindcss": "^3.2.4"
   }
 }

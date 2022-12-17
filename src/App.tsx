@@ -1,33 +1,31 @@
 // Copyright 2022-2023 @Kotlang/navachar-admin-portal authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import React from 'react';
 
-import { LoginRequest } from './generated/login_pb';
-import { LoginClient } from './generated/LoginServiceClientPb';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { ConfigProvider } from 'antd';
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { antdTheme } from 'src/themes/antdTheme';
+import { styledTheme } from 'src/themes/styledTheme';
+import { ThemeProvider } from 'styled-components';
+
+import AppLayout from './components/AppLayout';
+import { GlobalStyle } from './ui-components/GlobalStyle';
 
 function App() {
-	console.log(process.env.REACT_APP_AUTH_DOMAIN);
-	const grpcCall = () => {
-		const loginRequest = new LoginRequest();
-		loginRequest.setEmailorphone('8054984350');
-		const authDomain = process.env.REACT_APP_AUTH_DOMAIN;
-		if (authDomain) {
-			loginRequest.setDomain(authDomain);
-		}
-		console.log('hi bye');
-		const authURL = process.env.REACT_APP_AUTH_URL;
-		if (authURL) {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const loginClient = new LoginClient(authURL).login(loginRequest, {}, (err, response) => {
-				console.log({ err, response });
-			});
-		}
-	};
 	return (
-		<div className='bg-red-500'>
-			<button className='bg-blue-500 text-white' onClick={grpcCall}>Click</button>
-		</div>
+		<BrowserRouter>
+			<ConfigProvider theme={antdTheme}>
+				<ThemeProvider theme={styledTheme}>
+					<GlobalStyle />
+					<ToastContainer />
+					<AppLayout />
+				</ThemeProvider>
+			</ConfigProvider>
+		</BrowserRouter>
 	);
 }
 

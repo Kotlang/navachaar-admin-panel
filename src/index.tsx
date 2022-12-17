@@ -1,8 +1,13 @@
+// Copyright 2022-2023 @Kotlang/navachar-admin-portal authors & contributors
+// This software may be modified and distributed under the terms
+// of the Apache-2.0 license. See the LICENSE file for details.
+import './index.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+import reportWebVitals from './reportWebVitals';
 import { routes } from './routes';
 
 const root = ReactDOM.createRoot(
@@ -12,9 +17,9 @@ const root = ReactDOM.createRoot(
 const router = createBrowserRouter(routes);
 
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+	<React.StrictMode>
+		<RouterProvider router={router} />
+	</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

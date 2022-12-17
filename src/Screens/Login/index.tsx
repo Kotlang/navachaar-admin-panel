@@ -10,15 +10,16 @@ import { useLoginStore } from 'src/store';
 const Login = () => {
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
-	const { authHeader, setEmailOrPhone } = useLoginStore(({ authHeader, setEmailOrPhone }) => ({
-		authHeader, setEmailOrPhone
+	const { authResponse, setEmailOrPhone } = useLoginStore(({ authResponse, setEmailOrPhone }) => ({
+		authResponse,
+		setEmailOrPhone
 	}));
 	useEffect(() => {
-		if (authHeader) {
+		if (authResponse?.jwt && authResponse?.jwt.trim().length > 0) {
 			navigate('/');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [authHeader]);
+	}, [authResponse?.jwt]);
 	return (
 		<section className='flex items-center justify-center min-h-screen'>
 			<Form

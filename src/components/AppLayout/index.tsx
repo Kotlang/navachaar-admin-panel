@@ -18,19 +18,22 @@ const AppLayout = ({ className }: { className?: string }) => {
 	const [sideDrawer, setSideDrawer] = useState(false);
 
 	const navigate = useNavigate();
-	const { authHeader } = useLoginStore(({ authHeader }) => ({
-		authHeader
+	const { authResponse, isAdmin, isLogin } = useLoginStore(({ authResponse, isAdmin, isLogin }) => ({
+		authResponse,
+		isAdmin,
+		isLogin
 	}));
 
 	useEffect(() => {
-		if (authHeader.trim().length === 0) {
+		if (!isLogin()) {
 			navigate('/login');
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [authHeader]);
+	}, [authResponse?.jwt]);
+
 	return (
 		<Layout className={className}>
-			{authHeader.trim().length === 0 ? <SwitchRoutes /> : <>
+			{isAdmin() && isLogin() ? <>
 				<NavHeader setSideDrawer={setSideDrawer} sideDrawer={sideDrawer} />
 				<Layout hasSider className='relative'>
 					<Sider
@@ -62,7 +65,7 @@ const AppLayout = ({ className }: { className?: string }) => {
 					</Layout>
 				</Layout>
 				<Footer/>
-			</>}
+			</>: <SwitchRoutes />}
 		</Layout>
 	);
 };

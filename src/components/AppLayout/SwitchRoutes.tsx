@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 import Home from 'src/Screens/Home';
 import Login from 'src/Screens/Login';
 import NotFound from 'src/Screens/NotFound';
+import PermissionDenied from 'src/Screens/PermissionDenied';
 import Verify from 'src/Screens/Verify';
 
 const SwitchRoutes = () => {
@@ -15,6 +16,7 @@ const SwitchRoutes = () => {
 			<Route path='/' element={<Home/>} />
 			<Route path='/login' element={<Login/>} />
 			<Route path='/verify' element={<Verify/>} />
+			<Route path='/not-admin' element={<PermissionDenied/>} />
 			<Route path='*' element={<NotFound/>} />
 		</Routes>
 	);

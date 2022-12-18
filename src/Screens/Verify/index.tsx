@@ -2,22 +2,60 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Button } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import OtpInput from 'react-otp-input';
-import { useNavigate } from 'react-router-dom';
-import { getLoginClient, getVerifyRequest } from 'src/clients/login';
+import { useLocation, useNavigate } from 'react-router-dom';
+import clients from 'src/clients';
+import { getAuthResponse } from 'src/clients/utils';
 import { useLoginStore } from 'src/store';
-import { IAuthResponse } from 'src/store/login';
 
 const Verify = () => {
 	const navigate = useNavigate();
+	const { state } = useLocation();
 	const [otp, setOtp] = useState('');
 	const [loading, setLoading] = useState(false);
-	const { authResponse, setAuthResponse } = useLoginStore(({ authResponse, setAuthResponse }) => ({
+	const [err, setErr] = useState('');
+
+	const { authResponse, isAdmin, isLogin, setAuthResponse } = useLoginStore(({ authResponse, isAdmin, isLogin, setAuthResponse }) => ({
 		authResponse,
+		isAdmin,
+		isLogin,
 		setAuthResponse
 	}));
-	const emailOrPhone = authResponse?.profile?.phone || authResponse?.profile?.email;
+
+	const emailOrPhone = authResponse?.profile?.phone || authResponse?.profile?.email || state?.emailOrPhone;
+
+	const onVerify = () => {
+		setLoading(true);
+		setErr('');
+		console.log('onVerify', emailOrPhone, otp);
+		clients.auth.login.Verify(emailOrPhone || '', otp, {}, (err, response) => {
+			if (err) {
+				console.error(err);
+				if (err.message === 'Wrong OTP') {
+					setLoading(false);
+					setErr('Invalid! OTP, please enter correct otp');
+					setOtp('');
+				}
+			} else {
+				setLoading(false);
+				setAuthResponse(getAuthResponse(response));
+				const userType = response.getUsertype();
+				if (userType === 'admin') {
+					navigate('/');
+				} else {
+					navigate('/not-admin');
+				}
+			}
+		});
+	};
+
+	useEffect(() => {
+		if (isLogin() && isAdmin()) {
+			navigate('/');
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [navigate]);
 	return (
 		<section className='flex flex-col gap-y-5 items-center justify-center min-h-screen'>
 			<div className='flex flex-col gap-y-2 -mt-20'>
@@ -48,6 +86,7 @@ const Verify = () => {
 						outline: 'none'
 					}}
 				/>
+				{err.length > 0? <p className='text-red-500'>{err}</p>: null}
 			</div>
 			<div className="flex justify-center items-center gap-x-5">
 				<Button
@@ -61,47 +100,14 @@ const Verify = () => {
 					Back
 				</Button>
 				<Button
+					disabled={otp.trim().length !== 6}
 					loading={loading}
 					htmlType="button"
 					size="large"
 					className="w-36 rounded-md outline-none border-none bg-black text-white hover:text-white"
-					onClick={() => {
-						setLoading(true);
-						const loginClient = getLoginClient();
-						loginClient.verify(getVerifyRequest(emailOrPhone || '', otp), {}, (err, response) => {
-							if (err) {
-								console.error(err);
-							} else {
-								setLoading(false);
-								const authResponse: IAuthResponse = {
-									jwt: response.getJwt(),
-									profile: {
-										attributesList: response.getProfile()?.getAttributesList(),
-										createdOn: response.getProfile()?.getCreatedon(),
-										domain: response.getProfile()?.getDomain(),
-										email: response.getProfile()?.getEmail(),
-										gender: response.getProfile()?.getGender(),
-										loginId: response.getProfile()?.getLoginid(),
-										metaData: response.getProfile()?.getMetadatamap(),
-										name: response.getProfile()?.getName(),
-										phone: response.getProfile()?.getPhone(),
-										photoUrl: response.getProfile()?.getPhotourl(),
-										preferredLanguage: response.getProfile()?.getPreferredlanguage()
-									},
-									userType: response.getUsertype()
-								};
-								setAuthResponse(authResponse);
-								const userType = response.getUsertype();
-								if (userType === 'admin') {
-									navigate('/');
-								} else {
-									navigate('/not-admin');
-								}
-							}
-						});
-					}}
+					onClick={onVerify}
 				>
-            Verify
+					Verify
 				</Button>
 			</div>
 		</section>

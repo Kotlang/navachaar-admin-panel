@@ -4,16 +4,32 @@
 import { Button, Form, Input } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getLoginClient, getLoginRequest } from 'src/clients/login';
+import clients from 'src/clients';
 import { useLoginStore } from 'src/store';
 
 const Login = () => {
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
-	const { authResponse, setEmailOrPhone } = useLoginStore(({ authResponse, setEmailOrPhone }) => ({
-		authResponse,
-		setEmailOrPhone
+	const { authResponse } = useLoginStore(({ authResponse }) => ({
+		authResponse
 	}));
+	const getOTP = (values: any) => {
+		if (values.emailOrPhone) {
+			setLoading(true);
+			clients.auth.login.Login(values.emailOrPhone, {}, (err) => {
+				if (err) {
+					console.error(err);
+				} else {
+					setLoading(false);
+					navigate('/verify', {
+						state: {
+							emailOrPhone: values.emailOrPhone
+						}
+					});
+				}
+			});
+		}
+	};
 	useEffect(() => {
 		if (authResponse?.jwt && authResponse?.jwt.trim().length > 0) {
 			navigate('/');
@@ -24,28 +40,14 @@ const Login = () => {
 		<section className='flex items-center justify-center min-h-screen'>
 			<Form
 				className='-mt-10'
-				onFinish={(values) => {
-					if (values.emailOrPhone) {
-						setLoading(true);
-						setEmailOrPhone(values.emailOrPhone);
-						const loginClient = getLoginClient();
-						loginClient.login(getLoginRequest(values.emailOrPhone), {}, (err) => {
-							if (err) {
-								console.error(err);
-							} else {
-								setLoading(false);
-								navigate('/verify');
-							}
-						});
-					}
-				}}
+				onFinish={getOTP}
 			>
 				<div
 					className='flex flex-col gap-y-2'
 				>
 					<label htmlFor="emailOrPhone" className='block'>
 						<p className='text-xl font-medium'>
-              Please enter a phone number
+							Please enter a phone number
 						</p>
 					</label>
 					<Form.Item
@@ -73,7 +75,7 @@ const Login = () => {
 						size="large"
 						className="w-36 rounded-md outline-none border-none bg-black text-white hover:text-white"
 					>
-            Get OTP
+						Get OTP
 					</Button>
 				</div>
 			</Form>

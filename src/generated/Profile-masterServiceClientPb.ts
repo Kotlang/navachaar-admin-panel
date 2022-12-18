@@ -82,5 +82,177 @@ export class ProfileMasterClient {
     this.methodDescriptorGetProfileMaster);
   }
 
+  methodDescriptorBulkGetProfileMaster = new grpcWeb.MethodDescriptor(
+    '/login.ProfileMaster/BulkGetProfileMaster',
+    grpcWeb.MethodType.UNARY,
+    profile$master_pb.BulkGetProfileMasterRequest,
+    profile$master_pb.ProfileMasterResponse,
+    (request: profile$master_pb.BulkGetProfileMasterRequest) => {
+      return request.serializeBinary();
+    },
+    profile$master_pb.ProfileMasterResponse.deserializeBinary
+  );
+
+  bulkGetProfileMaster(
+    request: profile$master_pb.BulkGetProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null): Promise<profile$master_pb.ProfileMasterResponse>;
+
+  bulkGetProfileMaster(
+    request: profile$master_pb.BulkGetProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: profile$master_pb.ProfileMasterResponse) => void): grpcWeb.ClientReadableStream<profile$master_pb.ProfileMasterResponse>;
+
+  bulkGetProfileMaster(
+    request: profile$master_pb.BulkGetProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: profile$master_pb.ProfileMasterResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/login.ProfileMaster/BulkGetProfileMaster',
+        request,
+        metadata || {},
+        this.methodDescriptorBulkGetProfileMaster,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/login.ProfileMaster/BulkGetProfileMaster',
+    request,
+    metadata || {},
+    this.methodDescriptorBulkGetProfileMaster);
+  }
+
+  methodDescriptorDeleteProfileMaster = new grpcWeb.MethodDescriptor(
+    '/login.ProfileMaster/DeleteProfileMaster',
+    grpcWeb.MethodType.UNARY,
+    profile$master_pb.DeleteProfileMasterRequest,
+    profile$master_pb.DeleteProfileMasterResponse,
+    (request: profile$master_pb.DeleteProfileMasterRequest) => {
+      return request.serializeBinary();
+    },
+    profile$master_pb.DeleteProfileMasterResponse.deserializeBinary
+  );
+
+  deleteProfileMaster(
+    request: profile$master_pb.DeleteProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null): Promise<profile$master_pb.DeleteProfileMasterResponse>;
+
+  deleteProfileMaster(
+    request: profile$master_pb.DeleteProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: profile$master_pb.DeleteProfileMasterResponse) => void): grpcWeb.ClientReadableStream<profile$master_pb.DeleteProfileMasterResponse>;
+
+  deleteProfileMaster(
+    request: profile$master_pb.DeleteProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: profile$master_pb.DeleteProfileMasterResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/login.ProfileMaster/DeleteProfileMaster',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteProfileMaster,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/login.ProfileMaster/DeleteProfileMaster',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteProfileMaster);
+  }
+
+  methodDescriptorAddProfileMaster = new grpcWeb.MethodDescriptor(
+    '/login.ProfileMaster/AddProfileMaster',
+    grpcWeb.MethodType.UNARY,
+    profile$master_pb.AddProfileMasterRequest,
+    profile$master_pb.ProfileMasterProto,
+    (request: profile$master_pb.AddProfileMasterRequest) => {
+      return request.serializeBinary();
+    },
+    profile$master_pb.ProfileMasterProto.deserializeBinary
+  );
+
+  addProfileMaster(
+    request: profile$master_pb.AddProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null): Promise<profile$master_pb.ProfileMasterProto>;
+
+  addProfileMaster(
+    request: profile$master_pb.AddProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: profile$master_pb.ProfileMasterProto) => void): grpcWeb.ClientReadableStream<profile$master_pb.ProfileMasterProto>;
+
+  addProfileMaster(
+    request: profile$master_pb.AddProfileMasterRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: profile$master_pb.ProfileMasterProto) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/login.ProfileMaster/AddProfileMaster',
+        request,
+        metadata || {},
+        this.methodDescriptorAddProfileMaster,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/login.ProfileMaster/AddProfileMaster',
+    request,
+    metadata || {},
+    this.methodDescriptorAddProfileMaster);
+  }
+
+  methodDescriptorUpdateProfileMaster = new grpcWeb.MethodDescriptor(
+    '/login.ProfileMaster/UpdateProfileMaster',
+    grpcWeb.MethodType.UNARY,
+    profile$master_pb.ProfileMasterProto,
+    profile$master_pb.ProfileMasterProto,
+    (request: profile$master_pb.ProfileMasterProto) => {
+      return request.serializeBinary();
+    },
+    profile$master_pb.ProfileMasterProto.deserializeBinary
+  );
+
+  updateProfileMaster(
+    request: profile$master_pb.ProfileMasterProto,
+    metadata: grpcWeb.Metadata | null): Promise<profile$master_pb.ProfileMasterProto>;
+
+  updateProfileMaster(
+    request: profile$master_pb.ProfileMasterProto,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: profile$master_pb.ProfileMasterProto) => void): grpcWeb.ClientReadableStream<profile$master_pb.ProfileMasterProto>;
+
+  updateProfileMaster(
+    request: profile$master_pb.ProfileMasterProto,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: profile$master_pb.ProfileMasterProto) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/login.ProfileMaster/UpdateProfileMaster',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateProfileMaster,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/login.ProfileMaster/UpdateProfileMaster',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateProfileMaster);
+  }
+
 }
 

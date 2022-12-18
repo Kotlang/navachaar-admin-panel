@@ -27,3 +27,10 @@ export interface ILogin {
 	isAdmin: () => boolean;
     setAuthResponse: (authResponse: IAuthResponse) => void;
 }
+
+export interface IProfileMaster {
+	language?: string;
+	options?: string[];
+	field?: string;
+	type?: string;
+}

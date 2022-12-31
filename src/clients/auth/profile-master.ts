@@ -3,7 +3,8 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Metadata, RpcError } from 'grpc-web';
-import { AddProfileMasterRequest, BulkGetProfileMasterRequest, DeleteProfileMasterRequest, DeleteProfileMasterResponse, GetProfileMasterRequest, ProfileMasterProto, ProfileMasterResponse } from 'src/generated/profile-master_pb.d';
+import { addJwtToken } from 'src/clients/utils';
+import { AddProfileMasterRequest, BulkGetProfileMasterRequest, DeleteProfileMasterRequest, DeleteProfileMasterResponse, GetProfileMasterRequest, ProfileMasterProto, ProfileMasterResponse } from 'src/generated/profile-master_pb';
 import { ProfileMasterClient } from 'src/generated/Profile-masterServiceClientPb';
 import { IProfileMaster } from 'src/types';
 
@@ -55,16 +56,16 @@ const getAddProfileMasterRequest = (profileMaster: IProfileMaster) => {
 
 const profileMasterClient = {
 	AddProfileMaster: (profileMaster: IProfileMaster, metaData: Metadata | null, callback: (err: RpcError, response: ProfileMasterProto) => void) => {
-		getProfileMasterClient().addProfileMaster(getAddProfileMasterRequest(profileMaster),metaData, callback);
+		getProfileMasterClient().addProfileMaster(getAddProfileMasterRequest(profileMaster),addJwtToken(metaData), callback);
 	},
 	BulkGetProfileMaster: (metaData: Metadata | null, callback: (err: RpcError, response: ProfileMasterResponse) => void) => {
-		getProfileMasterClient().bulkGetProfileMaster(getBulkGetProfileMasterRequest(),metaData, callback);
+		getProfileMasterClient().bulkGetProfileMaster(getBulkGetProfileMasterRequest(),addJwtToken(metaData), callback);
 	},
 	DeleteProfileMaster: (profileMasterId: string, metaData: Metadata | null, callback: (err: RpcError, response: DeleteProfileMasterResponse) => void) => {
-		getProfileMasterClient().deleteProfileMaster(getDeleteProfileMasterRequest(profileMasterId),metaData, callback);
+		getProfileMasterClient().deleteProfileMaster(getDeleteProfileMasterRequest(profileMasterId),addJwtToken(metaData), callback);
 	},
 	GetProfileMaster: (language: string, metaData: Metadata | null, callback: (err: RpcError, response: ProfileMasterResponse) => void) => {
-		getProfileMasterClient().getProfileMaster(getProfileMasterRequest(language),metaData, callback);
+		getProfileMasterClient().getProfileMaster(getProfileMasterRequest(language),addJwtToken(metaData), callback);
 	}
 };
 

@@ -2,8 +2,10 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
+import { Metadata } from 'grpc-web';
 import { UserProfileProto } from 'src/generated/common_pb';
 import { AuthResponse } from 'src/generated/login_pb';
+import { useLoginStore } from 'src/store';
 import { IAuthResponse, IUserProfile } from 'src/types';
 
 const getAuthResponse: (authResponse: AuthResponse) => IAuthResponse = (authResponse) => {
@@ -31,4 +33,13 @@ const getUserProfile: (userProfileProto: UserProfileProto) => IUserProfile = (us
 	};
 };
 
-export { getAuthResponse, getUserProfile };
+const addJwtToken = (metaData: Metadata | null) => {
+	const jwt = useLoginStore.getState().authResponse.jwt;
+	const newMetaData: Metadata = {
+		...metaData,
+		'Authorization': `Bearer ${jwt}`
+	};
+	return newMetaData;
+};
+
+export { getAuthResponse, addJwtToken, getUserProfile };

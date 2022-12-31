@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Metadata, RpcError } from 'grpc-web';
+import { addJwtToken } from 'src/clients/utils';
 import { UserProfileProto } from 'src/generated/common_pb';
 import {
 	BulkGetProfileRequest,
@@ -61,13 +62,13 @@ const getProfileRequest = (userId: string) => {
 
 const profileClient = {
 	BulkGetProfileByIds: (userIds: string[], metaData: Metadata | null, callback: (err: RpcError, response: BulkGetProfileResponse) => void) => {
-		getProfileClient().bulkGetProfileByIds(getBulkProfileRequest(userIds), metaData, callback);
+		getProfileClient().bulkGetProfileByIds(getBulkProfileRequest(userIds), addJwtToken(metaData), callback);
 	},
 	CreateOrUpdateProfile: (userProfile: IUserProfile, metaData: Metadata | null, callback: (err: RpcError, response: UserProfileProto) => void) => {
-		getProfileClient().createOrUpdateProfile(getCreateProfileRequest(userProfile), metaData, callback);
+		getProfileClient().createOrUpdateProfile(getCreateProfileRequest(userProfile), addJwtToken(metaData), callback);
 	},
 	GetProfileByID: (userId: string, metaData: Metadata | null, callback: (err: RpcError, response: UserProfileProto) => void) => {
-		getProfileClient().getProfileById(getProfileRequest(userId), metaData, callback);
+		getProfileClient().getProfileById(getProfileRequest(userId), addJwtToken(metaData), callback);
 	}
 };
 

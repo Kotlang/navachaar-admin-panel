@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "rm -Rf src/generated \n mkdir src/generated \n cd ./social-model \n protoc --js_out=import_style=commonjs,binary:../src/generated --grpc-web_out=import_style=typescript,mode=grpcwebtext:../src/generated *.proto \n cd .. \n cd ./auth-model \n protoc --js_out=import_style=commonjs,binary:../src/generated --grpc-web_out=import_style=typescript,mode=grpcwebtext:../src/generated *.proto \n cd .. \n react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "npx eslint ./src/ --ext .js,.jsx,.ts,.tsx",

@@ -17,8 +17,9 @@ jobs:
         run: sudo apt install -y protobuf-compiler
       - name: Install protoc-gen-grpc-web
         run: |
-          curl -L /usr/local/bin/protoc-gen-grpc-web https://github.com/grpc/grpc-web/releases/download/1.4.2/protoc-gen-grpc-web-1.4.2-linux-x86_64
+          curl -o /usr/local/bin/protoc-gen-grpc-web https://github.com/grpc/grpc-web/releases/download/1.4.2/protoc-gen-grpc-web-1.4.2-linux-x86_64
           chmod +x /usr/local/bin/protoc-gen-grpc-web
+          export PATH = "$PATH:/usr/local/bin"
       - name: Build
         run: ./build.sh
       - name: Install Vercel CLI

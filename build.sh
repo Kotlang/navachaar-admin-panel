@@ -11,4 +11,4 @@ protoc --js_out=import_style=commonjs,binary:../src/generated \
     --grpc-web_out=import_style=typescript,mode=grpcwebtext:../src/generated \
     *.proto
 cd ..
-ls src/
+ls src/generated

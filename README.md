@@ -1,4 +1,4 @@
-# Admin Portal for Navachar
+# Admin Portal for Navachaar
 
 #### Steps to run this project locally
 

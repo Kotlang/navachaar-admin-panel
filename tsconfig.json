@@ -25,7 +25,8 @@
     "useUnknownInCatchVariables": false
   },
   "exclude": [
-    "**/generated/**/*",
+    "generated",
+    "src/generated",
     "node_modules",
     "public",
     ".cache"

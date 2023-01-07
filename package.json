@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "./build.sh && react-scripts build",
+    "build": "./codegen.sh && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "npx eslint ./src/ --ext .js,.jsx,.ts,.tsx",

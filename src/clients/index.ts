@@ -3,12 +3,16 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { loginClient, profileClient, profileMasterClient } from './auth';
+import { adminClient } from './localization';
 
 const clients = {
 	auth: {
 		login: loginClient,
 		profile: profileClient,
 		profileMaster: profileMasterClient
+	},
+	localization: {
+		admin: adminClient
 	}
 };
 

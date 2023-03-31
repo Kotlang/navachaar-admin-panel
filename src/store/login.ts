@@ -21,6 +21,18 @@ const useLoginStore = create<ILogin>()(
 				isLogin: () => {
 					return get().authResponse.jwt.trim().length > 0;
 				},
+				logout: () => {
+					set((state) => {
+						return {
+							...state,
+							authResponse: {
+								jwt: '',
+								profile: {},
+								userType: ''
+							}
+						};
+					});
+				},
 				setAuthResponse: (authResponse) => {
 					set((state) => {
 						return { ...state, authResponse };

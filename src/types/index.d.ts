@@ -25,6 +25,7 @@ export interface ILogin {
 	authResponse: IAuthResponse;
 	isLogin: () => boolean;
 	isAdmin: () => boolean;
+	logout: () => void;
     setAuthResponse: (authResponse: IAuthResponse) => void;
 }
 

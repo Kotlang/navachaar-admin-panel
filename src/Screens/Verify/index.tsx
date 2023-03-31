@@ -28,7 +28,6 @@ const Verify = () => {
 	const onVerify = () => {
 		setLoading(true);
 		setErr('');
-		console.log('onVerify', emailOrPhone, otp);
 		clients.auth.login.Verify(emailOrPhone || '', otp, {}, (err, response) => {
 			if (err) {
 				console.error(err);

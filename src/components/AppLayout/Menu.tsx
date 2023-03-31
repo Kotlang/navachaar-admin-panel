@@ -18,6 +18,14 @@ const menuItems = [
 	{
 		key: '/settings',
 		title: 'Settings'
+	},
+	{
+		key: '/localization',
+		title: 'Localization'
+	},
+	{
+		key: '/logout',
+		title: 'Logout'
 	}
 ];
 

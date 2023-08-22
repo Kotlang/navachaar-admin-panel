@@ -4,7 +4,7 @@ on:
   push:
     # Publish `release` as Docker `latest` image.
     branches:
-      - master
+      - main
 
     # Publish `v1.2.3` tags as releases.
     tags:
@@ -61,6 +61,6 @@ jobs:
 
       - name: Push image
         run: |
-          if [ "${{ github.ref }}" == "refs/heads/master" ]; then
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
             docker push sainageswar/$IMAGE_NAME:$IMAGE_TAG
           fi

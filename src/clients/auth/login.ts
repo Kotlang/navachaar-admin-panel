@@ -9,6 +9,7 @@ import { LoginClient } from 'src/generated/LoginServiceClientPb';
 
 const getLoginClient = (() => {
 	const authURL = process.env.REACT_APP_AUTH_URL;
+	console.log(authURL);
 	let client: LoginClient;
 	if (authURL) {
 		client = new LoginClient(authURL);

@@ -13,6 +13,7 @@ import { styledTheme } from 'src/themes/styledTheme';
 import { ThemeProvider } from 'styled-components';
 
 import AppLayout from './components/AppLayout';
+import Events from './Screens/Events';
 import Home from './Screens/Home';
 import Localization from './Screens/Localization';
 import Login from './Screens/Login';
@@ -35,6 +36,7 @@ function App() {
 							<Route path='/not-admin' element={<PermissionDenied/>} />
 							<Route path='/localization' element={<Localization />} />
 							<Route path='/logout' element={<Logout />} />
+							<Route path='/events' element={<Events />} />
 							<Route path='*' element={<NotFound />} />
 						</Route>
 						<Route path='/login' element={<Login />}/>

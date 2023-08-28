@@ -4,6 +4,7 @@
 
 import { loginClient, profileClient, profileMasterClient } from './auth';
 import { adminClient } from './localization';
+import { userPostClient } from './social';
 
 const clients = {
 	auth: {
@@ -13,6 +14,9 @@ const clients = {
 	},
 	localization: {
 		admin: adminClient
+	},
+	social: {
+		userPost: userPostClient
 	}
 };
 

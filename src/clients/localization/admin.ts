@@ -7,6 +7,7 @@ import { addJwtToken } from 'src/clients/utils';
 import { AddLabelRequest } from 'src/generated/admin_pb';
 import { LocalizationAdminClient } from 'src/generated/AdminServiceClientPb';
 import { StatusResponse } from 'src/generated/common_pb';
+import { ILabel } from 'src/types';
 
 const getAdminClient = (() => {
 	const localizationURL = process.env.REACT_APP_LOCALIZATION_URL;
@@ -27,12 +28,6 @@ const addLabelRequest = (label: ILabel) => {
 	addLabelRequest.setLanguage(language);
 	return addLabelRequest;
 };
-
-interface ILabel {
-    key: string;
-    value: string;
-    language: string
-}
 
 const adminClient = {
 	AddLabel: (label: ILabel, metadata: Metadata | null, callback: (err: RpcError, response: StatusResponse) => void) => {

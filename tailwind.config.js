@@ -24,6 +24,16 @@ module.exports = {
 				'top': '0px -3px 4px #CAC9F9'
 			},
 			colors: {
+				'NeutralButtonShadow': '#A8996D',
+				'NeutralButtonShadowLight': '#F0EBDD',
+				'NeutralButtonSurface': '#FCFBF5',
+				'NeutralShadowMeduim': '#EFE5C7',
+				'NeutralSurfaceBgUp': '#FFFFFF',
+				'OnNeutralActive': '#FFA500',
+				'OnNeutralButtons': '#1B1C1E',
+				'PrimarySurfaceDim': '#FED17B',
+				'PrimarySurfaceDimmer': '#FFEAC2',
+				'SecondarySurface': '#4ECB71',
 				black_full: '#000',
 				black_primary: 'rgba(0, 0, 0, 0.9)',
 				black_text: '#1F1F1F',
@@ -39,6 +49,7 @@ module.exports = {
 			},
 			fontFamily: {
 				// add new font family
+				mainfont: ['Barlow', 'sans-serif'],
 				primary: ['DM Sans']
 			}
 		}

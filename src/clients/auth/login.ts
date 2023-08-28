@@ -9,7 +9,6 @@ import { LoginClient } from 'src/generated/LoginServiceClientPb';
 
 const getLoginClient = (() => {
 	const authURL = process.env.REACT_APP_AUTH_URL;
-	console.log(authURL);
 	let client: LoginClient;
 	if (authURL) {
 		client = new LoginClient(authURL);
@@ -21,7 +20,7 @@ const getLoginClient = (() => {
 
 const getLoginRequest = (emailOrPhone: string) => {
 	const loginRequest = new LoginRequest();
-	const authDomain = process.env.REACT_APP_AUTH_DOMAIN;
+	const authDomain = localStorage.getItem('DOMAIN_TYPE') === 'PROD'? process.env.REACT_APP_AUTH_DOMAIN_PROD: process.env.REACT_APP_AUTH_DOMAIN_DEV;
 	if (authDomain) {
 		loginRequest.setDomain(authDomain);
 	}
@@ -31,7 +30,7 @@ const getLoginRequest = (emailOrPhone: string) => {
 
 const getVerifyRequest = (emailOrPhone: string, otp: string) => {
 	const verifyRequest = new VerifyRequest();
-	const authDomain = process.env.REACT_APP_AUTH_DOMAIN;
+	const authDomain = localStorage.getItem('DOMAIN_TYPE') === 'PROD'? process.env.REACT_APP_AUTH_DOMAIN_PROD: process.env.REACT_APP_AUTH_DOMAIN_DEV;
 	if (authDomain) {
 		verifyRequest.setDomain(authDomain);
 	}

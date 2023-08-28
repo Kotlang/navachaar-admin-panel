@@ -1,7 +1,7 @@
 // Copyright 2022-2023 @Kotlang/navachaar-admin-portal authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, Radio } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clients from 'src/clients';
@@ -10,11 +10,15 @@ import { useLoginStore } from 'src/store';
 const Login = () => {
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
+	const [form] = Form.useForm();
 	const { authResponse } = useLoginStore(({ authResponse }) => ({
 		authResponse
 	}));
-	const getOTP = (values: any) => {
-		if (values.emailOrPhone) {
+	const getOTP = async (values: any) => {
+		await form.validateFields();
+		console.log(values);
+		if (values.emailOrPhone && values.domainType) {
+			localStorage.setItem('DOMAIN_TYPE', values.domainType);
 			setLoading(true);
 			clients.auth.login.Login(values.emailOrPhone, {}, (err) => {
 				if (err) {
@@ -39,9 +43,38 @@ const Login = () => {
 	return (
 		<section className='flex items-center justify-center min-h-screen'>
 			<Form
+				form={form}
 				className='-mt-10'
 				onFinish={getOTP}
+				initialValues={{
+					domainType: 'DEV'
+				}}
 			>
+				<div
+					className='flex flex-col gap-y-2'
+				>
+					<label htmlFor="emailOrPhone" className='block'>
+						<p className='text-xl font-medium'>
+							Select domain type
+						</p>
+					</label>
+					<Form.Item
+						name='domainType'
+						rules={
+							[
+								{
+									message: 'Domain type is required.',
+									required: true
+								}
+							]
+						}
+					>
+						<Radio.Group buttonStyle="solid">
+							<Radio.Button value='DEV'>Development</Radio.Button>
+							<Radio.Button value='PROD'>Production</Radio.Button>
+						</Radio.Group>
+					</Form.Item>
+				</div>
 				<div
 					className='flex flex-col gap-y-2'
 				>

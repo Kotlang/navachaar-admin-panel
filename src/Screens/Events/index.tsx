@@ -280,9 +280,9 @@ const Events = () => {
 						const tagElem = (
 							<Tag
 								key={tag}
-								closable={index !== 0}
+								closable={!loading}
 								style={{ userSelect: 'none' }}
-								onClose={() => !loading && handleClose(tag)}
+								onClose={() => handleClose(tag)}
 							>
 								<span
 									onDoubleClick={(e) => {

@@ -6,26 +6,43 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { ConfigProvider } from 'antd';
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { antdTheme } from 'src/themes/antdTheme';
 import { styledTheme } from 'src/themes/styledTheme';
 import { ThemeProvider } from 'styled-components';
 
 import AppLayout from './components/AppLayout';
+import Home from './Screens/Home';
+import Localization from './Screens/Localization';
+import Login from './Screens/Login';
+import Logout from './Screens/Logout';
+import NotFound from './Screens/NotFound';
+import PermissionDenied from './Screens/PermissionDenied';
+import Verify from './Screens/Verify';
 import { GlobalStyle } from './ui-components/GlobalStyle';
 
 function App() {
 	return (
-		<BrowserRouter>
-			<ConfigProvider theme={antdTheme}>
-				<ThemeProvider theme={styledTheme}>
-					<GlobalStyle />
-					<ToastContainer />
-					<AppLayout />
-				</ThemeProvider>
-			</ConfigProvider>
-		</BrowserRouter>
+		<ConfigProvider theme={antdTheme}>
+			<ThemeProvider theme={styledTheme}>
+				<GlobalStyle />
+				<ToastContainer />
+				<BrowserRouter>
+					<Routes>
+						<Route element={<AppLayout />}>
+							<Route path='/' element={<Home/>} />
+							<Route path='/not-admin' element={<PermissionDenied/>} />
+							<Route path='/localization' element={<Localization />} />
+							<Route path='/logout' element={<Logout />} />
+							<Route path='*' element={<NotFound />} />
+						</Route>
+						<Route path='/login' element={<Login />}/>
+						<Route path='/verify' element={<Verify />}/>
+					</Routes>
+				</BrowserRouter>
+			</ThemeProvider>
+		</ConfigProvider>
 	);
 }
 

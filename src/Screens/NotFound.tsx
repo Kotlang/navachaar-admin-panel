@@ -10,7 +10,9 @@ const NotFound = () => {
 		>
 			<div className='flex flex-col gap-y-2'>
 				<h1 className='text-2xl md:text-4xl'>Oops!</h1>
-				<p className='text-lg md:text-xl text-red-500 '>404 | This page could not be found</p>
+				<p className='text-lg md:text-xl text-red-500'>
+					404 | This page could not be found
+				</p>
 			</div>
 		</section>
 	);

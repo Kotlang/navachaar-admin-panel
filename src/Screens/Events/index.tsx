@@ -359,7 +359,7 @@ const Events = () => {
 							message: 'Event location latitude is required.',
 							validator(rule, value, callback){
 								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.OFFLINE) {
+								if (otherFieldValue === EventType.OFFLINE && !value) {
 									callback(rule?.message?.toString());
 								} else {
 									callback();
@@ -384,7 +384,7 @@ const Events = () => {
 							message: 'Event location longitude is required.',
 							validator(rule, value, callback){
 								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.OFFLINE) {
+								if (otherFieldValue === EventType.OFFLINE && !value) {
 									callback(rule?.message?.toString());
 								} else {
 									callback();

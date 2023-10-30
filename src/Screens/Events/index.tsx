@@ -96,7 +96,7 @@ const Events = () => {
 					long: values.longitude
 				},
 				name: values.name,
-				onlineLink: values.onlinelink,
+				onlineLink: values.onlineLink,
 				startAt: values.eventTime[0],
 				type: values.eventType
 			},

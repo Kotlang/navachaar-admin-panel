@@ -4,8 +4,7 @@
 
 import dayjs from 'dayjs';
 import { Gender } from 'src/generated/common_pb';
-import { EventType } from 'src/generated/postMetadata_pb';
-import { PostType } from 'src/generated/social_pb';
+import { EventType } from 'src/generated/events_pb';
 export interface IUserProfile {
 	attributesList?: string[];
 	createdOn?: number;
@@ -46,27 +45,28 @@ export interface ILabel {
     language: string
 }
 
-export interface IUserPost {
-	post?: string;
-	tags?: string[];
-	title?: string;
-	mediaUrls?: {
-		url: string;
-		mimetype: string;
+export interface IEvent {
+    title?: string;
+    type: EventType;
+    startAt?: dayjs.Dayjs;
+    endAt?: dayjs.Dayjs;
+    mediaUrls?: {
+		url?: string;
+		mimeType?: string;
 	}[];
-	postType: PostType;
-	socialEventMetadata?: {
-		name?: string;
-		type: EventType;
-		startAt?: dayjs.Dayjs;
-		endAt?: dayjs.Dayjs;
+    webPreviews?: {
+		title?: string;
+		previewImage?: string;
+		url?: string;
 		description?: string;
-		numAttendees?: number;
-		numSlots?: number;
-		location?: {
-			lat: number;
-			long: number;
-		};
-		onlineLink?: string;
+	}[];
+    description?: string;
+    numAttendees?: number;
+    numSlots?: number;
+    location?: {
+		lat?: number;
+		long?: number;
 	};
+    onlineLink?: string;
+    tags?: string[];
 }

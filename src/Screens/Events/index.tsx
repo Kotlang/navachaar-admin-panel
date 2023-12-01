@@ -3,13 +3,12 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Form, Input, InputNumber, InputRef, Radio, Select, Space, Tag, Tooltip } from 'antd';
+import { Button, DatePicker, Form, Input, InputNumber, InputRef, Radio, Space, Tag, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import clients from 'src/clients';
-import { PostType } from 'src/generated/social_pb';
-import { IUserPost } from 'src/types';
+import { IEvent } from 'src/types';
 
 export enum EventType {
 	ONLINE = 0,
@@ -85,27 +84,22 @@ const Events = () => {
 	};
 	const onSubmit = async (values: any) => {
 		await form.validateFields();
-		const userPost: IUserPost = {
-			post: values.post,
-			postType: values.postType,
-			socialEventMetadata: {
-				description: values.description,
-				endAt: values.eventTime[1],
-				location: {
-					lat: values.latitude,
-					long: values.longitude
-				},
-				name: values.name,
-				onlineLink: values.onlineLink,
-				startAt: values.eventTime[0],
-				type: values.eventType
+		const event: IEvent = {
+			description: values.description,
+			endAt: values.eventTime[1],
+			location: {
+				lat: values.latitude,
+				long: values.longitude
 			},
+			onlineLink: values.onlineLink,
+			startAt: values.eventTime[0],
 			tags: tags,
-			title: values.title
+			title: values.title,
+			type: values.eventType
 		};
 		try {
 			setLoading(true);
-			clients.social.userPost.CreatePost(userPost, {}, (err) => {
+			clients.social.event.CreateEvent(event, {}, (err) => {
 				console.log('Before:-', err);
 				setLoading(false);
 				form.resetFields();
@@ -121,35 +115,11 @@ const Events = () => {
 			form={form}
 			className='bg-white rounded-md shadow-md p-5'
 			initialValues={{
-				eventType: EventType.ONLINE,
-				postType: PostType.SOCIAL_EVENT
+				eventType: EventType.ONLINE
 			}}
 			onFinish={onSubmit}
 			disabled={loading}
 		>
-			<Form.Item
-				name='postType'
-				label='Post Type'
-				rules={
-					[
-						{
-							message: 'Post type is required.',
-							required: true
-						}
-					]
-				}
-			>
-				<Select
-					disabled={loading}
-					style={{ width: 200 }}
-					options={Object.entries(PostType).map(([key, value]) => {
-						return {
-							label: key,
-							value: value
-						};
-					})}
-				/>
-			</Form.Item>
 			<Form.Item
 				name='eventType'
 				label='Event Type'

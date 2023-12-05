@@ -10,8 +10,8 @@ import { IEvent } from 'src/types';
 
 import { addJwtToken } from '../utils';
 
-const getEventsClient = (() => {
-	const socialURL = process.env.REACT_APP_SOCIAL_URL;
+export const getEventsClient = (() => {
+	const socialURL = 'https://social.navachar.co:443/';
 	let client: EventsClient;
 	if (socialURL) {
 		client = new EventsClient(socialURL);
@@ -87,5 +87,4 @@ const EventClient = {
 		getEventsClient().createEvent(getCreatEventRequest(event), addJwtToken(metaData), callback);
 	}
 };
-
 export default EventClient;

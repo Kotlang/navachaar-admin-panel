@@ -1,0 +1,5 @@
+.sublist-bg {
+    background-color: #fde047; /* This is a light purple color, similar to 'lavender' */
+    width: calc(100% + 20px); /* Assuming the menu has 10px of padding on each side */
+    box-sizing: border-box;
+}

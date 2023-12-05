@@ -5,15 +5,16 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Form, Input, InputNumber, InputRef, Radio, Space, Tag, Tooltip } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
+import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import clients from 'src/clients';
+import { EventType } from 'src/generated/events_pb';
 import { IEvent } from 'src/types';
+import { EventProto } from 'src/types/index';
 
-export enum EventType {
-	ONLINE = 0,
-	OFFLINE = 1,
-}
+import { mockEvents } from './mockdb';
 
 const { RangePicker } = DatePicker;
 
@@ -27,6 +28,40 @@ const Events = () => {
 	const editInputRef = useRef<InputRef>(null);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
+	const { eventId } = useParams();
+	const isEditMode = eventId != null;
+
+	const fetchEventById = async (eventId: string): Promise<EventProto | undefined> => {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				const event = mockEvents.find(event => event.eventId === eventId);
+				resolve(event);
+			}, 1000);
+		});
+	};
+	if (isEditMode) {
+		fetchEventById(eventId).then((eventData) => {
+			if (eventData) {
+				form.setFieldsValue({
+					description: eventData.description,
+					eventTime: [
+						moment(eventData.endAt),
+						moment(eventData.startAt)
+					],
+					eventType: eventData.type,
+					latitude: eventData.location.lat,
+					longitude: eventData.location.long,
+					mediaUrls: eventData.mediaUrls.map(urlObj => urlObj.url).join(', '),
+					name: eventData.title,
+					numAttendees: eventData.numAttendees,
+					numSlots: eventData.numSlots,
+					onlineLink: eventData.onlineLink,
+					webPreviews: eventData.webPreviews.map(preview => preview.url).join(', ')
+				});
+				setTags(eventData.tags);
+			}
+		});
+	}
 
 	useEffect(() => {
 		if (inputVisible) {
@@ -91,6 +126,8 @@ const Events = () => {
 				lat: values.latitude,
 				long: values.longitude
 			},
+			numAttendees: values.numAttendees,
+			numSlots: values.numSlots,
 			onlineLink: values.onlineLink,
 			startAt: values.eventTime[0],
 			tags: tags,
@@ -100,10 +137,13 @@ const Events = () => {
 		try {
 			setLoading(true);
 			clients.social.event.CreateEvent(event, {}, (err) => {
-				console.log('Before:-', err);
+				if (err) {
+					console.log('Before:-', err);
+				} else {
+					toast('Post created successfully.');
+				}
 				setLoading(false);
 				form.resetFields();
-				toast('Post created successfully.');
 			});
 		} catch (error) {
 			console.log('Catch:-', error);
@@ -153,42 +193,6 @@ const Events = () => {
 				<RangePicker disabled={loading} showTime />
 			</Form.Item>
 			<Form.Item
-				name="title"
-				label='Normal post title'
-				className='max-w-[493px]'
-				rules={
-					[
-						{
-							message: 'Post title is required.',
-							required: true
-						}
-					]
-				}
-			>
-				<Input
-					disabled={loading}
-					placeholder='eg. farmer hub'
-				/>
-			</Form.Item>
-			<Form.Item
-				name="post"
-				label='Normal post Description'
-				className='max-w-[493px]'
-				rules={
-					[
-						{
-							message: 'Post description is required.',
-							required: true
-						}
-					]
-				}
-			>
-				<TextArea
-					disabled={loading}
-					placeholder='eg. All about organic farming'
-				/>
-			</Form.Item>
-			<Form.Item
 				name="name"
 				label='Event Name'
 				className='max-w-[493px]'
@@ -222,6 +226,152 @@ const Events = () => {
 				<TextArea
 					disabled={loading}
 					placeholder='eg. All about organic farming'
+				/>
+			</Form.Item>
+			<Form.Item
+				name="onlineLink"
+				label='Event Online Link'
+				className='max-w-[493px]'
+				rules={
+					[
+						{
+							message: 'Event online link is required.',
+							validator(rule, value, callback) {
+								const otherFieldValue = form.getFieldValue('eventType');
+								if (otherFieldValue === EventType.ONLINE && !value) {
+									callback(rule?.message?.toString());
+								} else {
+									callback();
+								}
+							}
+						}
+					]
+				}
+			>
+				<Input
+					disabled={loading}
+					placeholder='eg. https://meet.google.com/wwu-wdaj-znk'
+				/>
+			</Form.Item>
+
+			<Form.Item
+				name="latitude"
+				label='Event location latitude'
+				rules={
+					[
+						{
+							message: 'Event location latitude is required.',
+							validator(rule, value, callback) {
+								const otherFieldValue = form.getFieldValue('eventType');
+								if (otherFieldValue === EventType.OFFLINE && !value) {
+									callback(rule?.message?.toString());
+								} else {
+									callback();
+								}
+							}
+						}
+					]
+				}
+			>
+				<InputNumber
+					disabled={loading}
+					type='number'
+					placeholder='Latitude'
+				/>
+			</Form.Item>
+			<Form.Item
+				name="longitude"
+				label='Event location longitude'
+				rules={
+					[
+						{
+							message: 'Event location longitude is required.',
+							validator(rule, value, callback) {
+								const otherFieldValue = form.getFieldValue('eventType');
+								if (otherFieldValue === EventType.OFFLINE && !value) {
+									callback(rule?.message?.toString());
+								} else {
+									callback();
+								}
+							}
+						}
+					]
+				}
+			>
+				<InputNumber
+					disabled={loading}
+					type='number'
+					placeholder='longitude'
+				/>
+			</Form.Item>
+			{/* Media URLs */}
+			<Form.Item
+				name='mediaUrls'
+				label='Media URLs'
+				className='max-w-[493px]'
+				rules={[
+					{
+						message: 'Media URLs are required.',
+						required: true
+					}
+				]}
+			>
+				<Input
+					disabled={loading}
+					placeholder='Enter media URLs, separated by commas'
+				/>
+			</Form.Item>
+
+			{/* Web Previews */}
+			<Form.Item
+				name='webPreviews'
+				label='Web Previews'
+				className='max-w-[493px]'
+				rules={[
+					{
+						message: 'Web Previews are required.',
+						required: true
+					}
+				]}
+			>
+				<Input
+					disabled={loading}
+					placeholder='Enter web previews, separated by commas'
+				/>
+			</Form.Item>
+
+			{/* Num Attendees */}
+			<Form.Item
+				name='numAttendees'
+				label='Number of Attendees'
+				rules={[
+					{
+						message: 'Number of attendees is required.',
+						required: true
+					}
+				]}
+			>
+				<InputNumber
+					type='number'
+					placeholder='attendees'
+				/>
+			</Form.Item>
+
+			{/* Num Slots */}
+			<Form.Item
+				name='numSlots'
+				label='Number of Slots'
+				rules={[
+					{
+						message: 'Number of slots is required.',
+						required: true
+					}
+				]}
+			>
+				<InputNumber
+					disabled={loading}
+					type='number'
+					placeholder='slots'
 				/>
 			</Form.Item>
 			<Form.Item
@@ -294,89 +444,12 @@ const Events = () => {
 					)}
 				</Space>
 			</Form.Item>
-			<Form.Item
-				name="onlineLink"
-				label='Event Online Link'
-				className='max-w-[493px]'
-				rules={
-					[
-						{
-							message: 'Event online link is required.',
-							validator(rule, value, callback){
-								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.ONLINE && !value) {
-									callback(rule?.message?.toString());
-								} else {
-									callback();
-								}
-							}
-						}
-					]
-				}
-			>
-				<Input
-					disabled={loading}
-					placeholder='eg. https://meet.google.com/wwu-wdaj-znk'
-				/>
-			</Form.Item>
-
-			<Form.Item
-				name="latitude"
-				label='Event location latitude'
-				rules={
-					[
-						{
-							message: 'Event location latitude is required.',
-							validator(rule, value, callback){
-								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.OFFLINE && !value) {
-									callback(rule?.message?.toString());
-								} else {
-									callback();
-								}
-							}
-						}
-					]
-				}
-			>
-				<InputNumber
-					disabled={loading}
-					type='number'
-					placeholder='Latitude'
-				/>
-			</Form.Item>
-			<Form.Item
-				name="longitude"
-				label='Event location longitude'
-				rules={
-					[
-						{
-							message: 'Event location longitude is required.',
-							validator(rule, value, callback){
-								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.OFFLINE && !value) {
-									callback(rule?.message?.toString());
-								} else {
-									callback();
-								}
-							}
-						}
-					]
-				}
-			>
-				<InputNumber
-					disabled={loading}
-					type='number'
-					placeholder='longitude'
-				/>
-			</Form.Item>
-
 			<Form.Item>
 				<Button
 					disabled={loading}
 					htmlType='submit'
 				>
-					Submit
+					{isEditMode ? 'Save' : 'Create'}
 				</Button>
 			</Form.Item>
 		</Form>

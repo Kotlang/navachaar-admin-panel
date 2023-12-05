@@ -10,6 +10,7 @@ module.exports = {
 		'./src/*.{jsx,tsx}',
 		'./src/**/*.{jsx,tsx}'
 	],
+	darkMode: 'class',
 	important: true, // to generate utilities as !important
 	plugins: [],
 	theme: {
@@ -49,7 +50,7 @@ module.exports = {
 			},
 			fontFamily: {
 				// add new font family
-				mainfont: ['Barlow', 'sans-serif'],
+				mainfont: ['Barlow', 'sans-serif', 'poppins'],
 				primary: ['DM Sans']
 			}
 		}

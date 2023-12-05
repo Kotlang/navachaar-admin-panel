@@ -70,3 +70,38 @@ export interface IEvent {
     onlineLink?: string;
     tags?: string[];
 }
+
+interface Location {
+    lat: number;
+    long: number;
+}
+
+interface MediaUrl {
+    url: string;
+    type: 'IMAGE' | 'VIDEO'; // Add more types as needed
+}
+
+interface WebPreview {
+    url: string;
+    previewImage: string;
+}
+
+interface EventProto {
+    eventId: string;
+    title: string;
+    createdOn: number;
+    numReacts: { [key: string]: number };
+    numComments: number;
+    type: EventType;
+    onlineLink?: string;
+    startAt: number;
+    description: string;
+    numAttendees: number;
+    numSlots: number;
+    location: Location;
+    endAt: number;
+    tags: string[];
+    mediaUrls: MediaUrl[];
+    webPreviews: WebPreview[];
+    FeedUserReactions: string[];
+}

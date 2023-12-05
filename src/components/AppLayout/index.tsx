@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import Footer from './Footer';
 import Menu from './Menu';
 import NavHeader from './NavHeader';
-
 const { Content, Sider } = Layout;
 
 interface IAppLayoutProps extends PropsWithChildren {

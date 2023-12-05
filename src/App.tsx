@@ -3,11 +3,13 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
 
 import { ConfigProvider } from 'antd';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import EventMiddleware from 'src/routes/events/eventMiddleware';
 import { antdTheme } from 'src/themes/antdTheme';
 import { styledTheme } from 'src/themes/styledTheme';
 import { ThemeProvider } from 'styled-components';
@@ -22,7 +24,6 @@ import NotFound from './Screens/NotFound';
 import PermissionDenied from './Screens/PermissionDenied';
 import Verify from './Screens/Verify';
 import { GlobalStyle } from './ui-components/GlobalStyle';
-
 function App() {
 	return (
 		<ConfigProvider theme={antdTheme}>
@@ -37,7 +38,9 @@ function App() {
 							<Route path='/localization' element={<Localization />} />
 							<Route path='/logout' element={<Logout />} />
 							<Route path='/events' element={<Events />} />
+							<Route path='/events/*' element={<EventMiddleware />} />
 							<Route path='*' element={<NotFound />} />
+							<Route path='/home' element={<NotFound />} />
 						</Route>
 						<Route path='/login' element={<Login />}/>
 						<Route path='/verify' element={<Verify />}/>

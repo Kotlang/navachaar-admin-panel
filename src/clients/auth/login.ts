@@ -8,7 +8,7 @@ import { AuthResponse, LoginRequest, VerifyRequest } from 'src/generated/login_p
 import { LoginClient } from 'src/generated/LoginServiceClientPb';
 
 const getLoginClient = (() => {
-	const authURL = process.env.REACT_APP_AUTH_URL;
+	const authURL = 'https://auth.navachar.co:443/';
 	let client: LoginClient;
 	if (authURL) {
 		client = new LoginClient(authURL);
@@ -20,7 +20,7 @@ const getLoginClient = (() => {
 
 const getLoginRequest = (emailOrPhone: string) => {
 	const loginRequest = new LoginRequest();
-	const authDomain = localStorage.getItem('DOMAIN_TYPE') === 'PROD'? process.env.REACT_APP_AUTH_DOMAIN_PROD: process.env.REACT_APP_AUTH_DOMAIN_DEV;
+	const authDomain = '2ade0835-09be-49c2-9132-19118f668e9a';
 	if (authDomain) {
 		loginRequest.setDomain(authDomain);
 	}
@@ -30,7 +30,7 @@ const getLoginRequest = (emailOrPhone: string) => {
 
 const getVerifyRequest = (emailOrPhone: string, otp: string) => {
 	const verifyRequest = new VerifyRequest();
-	const authDomain = localStorage.getItem('DOMAIN_TYPE') === 'PROD'? process.env.REACT_APP_AUTH_DOMAIN_PROD: process.env.REACT_APP_AUTH_DOMAIN_DEV;
+	const authDomain = '2ade0835-09be-49c2-9132-19118f668e9a';
 	if (authDomain) {
 		verifyRequest.setDomain(authDomain);
 	}

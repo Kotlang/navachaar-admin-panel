@@ -25,6 +25,10 @@ const menuItems = [
 		title: 'Events'
 	},
 	{
+		key: '/content',
+		title: 'Posts'
+	},
+	{
 		key: '/profile-master',
 		title: 'Profile Master'
 	},

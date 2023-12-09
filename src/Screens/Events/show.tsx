@@ -3,77 +3,109 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import React, { useEffect, useState } from 'react';
-// import { EventType } from 'src/generated/events_pb';
-// import EventClient from 'src/clients/social/listevents';
-import { EventProto } from 'src/types/index';
+import { EventProto, EventFeedFilters, EventFeedResponse } from 'src/generated/events_pb';
+import EventClient from 'src/clients/social/listevents';
 import { useNavigate } from 'react-router-dom';
-import { mockEvents } from './mockdb';
+import Modal from 'react-modal';
+import clients from 'src/clients';
+import { toast } from 'react-toastify';
+
+function convertUnixTimeToDateTime(unixTimeInSeconds: number): string {
+	const milliseconds = unixTimeInSeconds * 1000;
+	const dateObject = new Date(milliseconds);
+
+	const formattedDateTime = new Intl.DateTimeFormat('en-US', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+		second: 'numeric',
+		timeZone: 'UTC',
+	}).format(dateObject);
+
+	return formattedDateTime;
+}
 
 const EventsTable: React.FC = () => {
 	const navigate = useNavigate();
+	const [isDialogOpen, setDialogOpen] = useState(false);
+	const [selectedEventId, setSelectedEventId] = useState('');
 
+	const handleDelete = (event: EventProto) => {
+		setSelectedEventId(event.getEventid());
+		setDialogOpen(true);
+	};
+
+	const handleConfirmDelete = async (eventId: string) => {
+		try {
+		  // Delete the event
+		  clients.social.event.DeleteEvent(eventId, {}, (err, res) => {
+			if (err) {
+			  console.log(err);
+			} else {
+			  console.log(res.getStatus());
+			  
+			  // Refetch events after deletion
+			  fetchEvents();
+			}
+		  });
+		} catch (error) {
+		  console.error('Error confirming delete:', error);
+		} finally {
+		  setDialogOpen(false);
+		}
+	  };
+	  
 	// Handler for the Edit button
 	const handleEdit = (event: any) => {
-		console.log(event.id)
-		navigate(`/events/${event.eventId}`);
+		navigate(`/events/${event}`);
 	};
 
 	// Handler for the Monitor button
 	const handleMonitor = (event: any) => {
-		navigate(`/events/monitor/${event.eventId}`);
+		navigate(`/events/monitor/${event}`);
 	};
 	const [events, setEvents] = useState<EventProto[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	// const fetchEventsAsync = (
-	// 	pageSize: number,
-	// 	pageNumber: number,
-	// 	filters: EventFeedFilters,
-	// 	metaData: {} | null
-	// ): Promise<EventFeedResponse> => {
-	// 	return new Promise((resolve, reject) => {
-	// 		EventClient.GetEventFeed(pageSize, pageNumber, filters, metaData, (err, response) => {
-	// 			if (err) {
-	// 				console.log(err);
-	// 				reject(err);
-	// 			} else {
-	// 				resolve(response);
-	// 			}
-	// 		});
-	// 	});
-	// };
+	const fetchEventsAsync = (
+		pageSize: number,
+		pageNumber: number,
+		filters: EventFeedFilters,
+		metaData: {} | null
+	): Promise<EventFeedResponse> => {
+		return new Promise((resolve, reject) => {
+			EventClient.GetEventFeed(pageSize, pageNumber, filters, metaData, (err, response) => {
+				if (err) {
+					console.log(err);
+					reject(err);
+				} else {
+					resolve(response);
+				}
+			});
+		});
+	};
 
-	// useEffect(() => {
-	// 	const fetchEvents = async () => {
-	// 		try {
-	// 			const filters = new EventFeedFilters();
-	// 			const response = await fetchEventsAsync(
-	// 				10, // pageSize
-	// 				1, // pageNumber
-	// 				filters,
-	// 				{} //metadata
-	// 			);
-
-	// 			setEvents(response.getEventsList());
-	// 		} catch (err) {
-	// 			console.error('Error fetching events:', err);
-	// 		} finally {
-	// 			setLoading(false);
-	// 		}
-	// 	};
-
-	// 	fetchEvents();
-	// }, []);
-
-	useEffect(() => {
-		// Simulate a delay to mimic the asynchronous behavior of fetching data
-		const delay = setTimeout(() => {
-			setEvents(mockEvents);
-			setLoading(false);
-		}, 1000);
-
-		// Cleanup the timeout on unmount or when the component re-renders
-		return () => clearTimeout(delay);
-	}, []);
+	const fetchEvents = async () => {
+		try {
+		  let allEvents: any[] = [];
+		  for (let i = 0; i < 3; i++) {
+			const filters = new EventFeedFilters();
+			filters.setEventstatus(i);
+			const response = await fetchEventsAsync(0, 0, filters, {});
+			allEvents = allEvents.concat(response.getEventsList());
+		  }
+		  setEvents(allEvents);
+		} catch (err) {
+		  console.error('Error fetching events:', err);
+		} finally {
+		  setLoading(false);
+		}
+	  };
+	  
+	  useEffect(() => {
+		fetchEvents();
+	  }, []);
 
 	if (loading) {
 		return <div>Loading...</div>;
@@ -112,24 +144,30 @@ const EventsTable: React.FC = () => {
 					<tbody>
 						{events.map((event, index) => (
 							<tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-								<td className="px-6 py-4">{event.title}</td>
-								<td className="px-6 py-4">{event.type === 0 ? 'Offline' : 'Online'}</td>
-								<td className="px-6 py-4">{new Date(event.startAt).toLocaleString()}</td>
-								<td className="px-6 py-4">{new Date(event.endAt).toLocaleString()}</td>
-								<td className="px-6 py-4">{event.numAttendees}</td>
-								<td className="px-6 py-4">{event.description}</td>
+								<td className="px-6 py-4">{event.getTitle()}</td>
+								<td className="px-6 py-4">{event.getType() === 0 ? 'Online' : 'Offline'}</td>
+								<td className="px-6 py-4">{convertUnixTimeToDateTime(event.getStartat())}</td>
+								<td className="px-6 py-4">{convertUnixTimeToDateTime(event.getEndat())}</td>
+								<td className="px-6 py-4">{event.getNumattendees()}</td>
+								<td className="px-6 py-4">{event.getDescription()}</td>
 								<td className="px-6 py-4">
 									<button
-										onClick={() => handleEdit(event)}
+										onClick={() => handleEdit(event.getEventid())}
 										className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l mr-2"
 									>
 										Edit
 									</button>
 									<button
-										onClick={() => handleMonitor(event)}
-										className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-r"
+										onClick={() => handleMonitor(event.getEventid())}
+										className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-r mr-2"
 									>
 										Monitor
+									</button>
+									<button
+										onClick={() => handleDelete(event)}
+										className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded "
+									>
+										Delete
 									</button>
 
 								</td>
@@ -138,6 +176,53 @@ const EventsTable: React.FC = () => {
 					</tbody>
 				</table>
 			</div>
+
+			<Modal
+				isOpen={isDialogOpen}
+				onRequestClose={() => setDialogOpen(false)}
+				contentLabel="Delete Event"
+				className="modal"
+				style={{
+					overlay: {
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+					},
+					content: {
+						position: 'relative',
+						top: 'auto',
+						left: 'auto',
+						right: 'auto',
+						bottom: 'auto',
+						margin: 'auto',
+						maxWidth: '400px', // Adjust the maximum width as needed
+						width: '100%',
+						padding: '0',
+						borderRadius: '8px',
+						boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+					},
+				}}
+			>
+				<div className="p-6 bg-white rounded-lg shadow-lg">
+					<p className="text-lg font-semibold mb-4">Are you sure you want to delete this event?</p>
+					<div className="flex justify-end">
+						<button
+							onClick={() => handleConfirmDelete(selectedEventId)}
+							className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2"
+						>
+							Yes, delete
+						</button>
+						<button
+							onClick={() => setDialogOpen(false)}
+							className="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded"
+						>
+							Cancel
+						</button>
+					</div>
+				</div>
+			</Modal>
+
+
 		</div>
 	);
 };

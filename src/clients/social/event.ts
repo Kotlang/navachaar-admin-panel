@@ -3,8 +3,17 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import { Metadata, RpcError } from 'grpc-web';
-import { Location, MediaUrl, WebPreview } from 'src/generated/commons_pb';
-import { CreateEventRequest, EventProto } from 'src/generated/events_pb';
+import {
+	Location,
+	MediaUrl,
+	SocialStatusResponse,
+	WebPreview
+} from 'src/generated/commons_pb';
+import {
+	CreateEventRequest,
+	EventIdRequest,
+	EventProto
+} from 'src/generated/events_pb';
 import { EventsClient } from 'src/generated/EventsServiceClientPb';
 import { IEvent } from 'src/types';
 
@@ -26,11 +35,11 @@ const getCreatEventRequest = (event: IEvent) => {
 	createEventRequest.setTitle(event.title || '');
 	createEventRequest.setType(event.type);
 
-	if (typeof event.startAt?.unix === 'function'){
+	if (typeof event.startAt?.unix === 'function') {
 		createEventRequest.setStartat(event.startAt?.unix());
 	}
 
-	if (typeof event.endAt?.unix === 'function'){
+	if (typeof event.endAt?.unix === 'function') {
 		createEventRequest.setEndat(event.endAt?.unix());
 	}
 
@@ -83,8 +92,39 @@ const getCreatEventRequest = (event: IEvent) => {
 };
 
 const EventClient = {
-	CreateEvent: (event: IEvent, metaData: Metadata | null, callback: (err: RpcError, response: EventProto) => void) => {
-		getEventsClient().createEvent(getCreatEventRequest(event), addJwtToken(metaData), callback);
+	CreateEvent: (
+		event: IEvent,
+		metaData: Metadata | null,
+		callback: (err: RpcError, response: EventProto) => void
+	) => {
+		console.log(event);
+		getEventsClient().createEvent(
+			getCreatEventRequest(event),
+			addJwtToken(metaData),
+			callback
+		);
+	},
+	DeleteEvent: (
+		eventID: string,
+		metaData: Metadata | null,
+		callback: (err: RpcError, response: SocialStatusResponse) => void
+	) => {
+		const eventidrequest = new EventIdRequest();
+		eventidrequest.setEventid(eventID);
+		getEventsClient().deleteEvent(
+			eventidrequest,
+			addJwtToken(metaData),
+			callback
+		);
+	},
+	GetEvent: (
+		eventID: string,
+		metaData: Metadata | null,
+		callback: (err: RpcError, response: EventProto) => void
+	) => {
+		const eventidrequest = new EventIdRequest();
+		eventidrequest.setEventid(eventID);
+		getEventsClient().getEvent(eventidrequest, addJwtToken(metaData), callback);
 	}
 };
 export default EventClient;

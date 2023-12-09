@@ -4,20 +4,9 @@
 
 import { Metadata, RpcError } from 'grpc-web';
 import { EventFeedFilters, EventFeedResponse, GetEventFeedRequest } from 'src/generated/events_pb';
-import { EventsClient } from 'src/generated/EventsServiceClientPb';
 
 import { addJwtToken } from '../utils';
-
-const getEventsClient = (() => {
-	const socialURL = 'https://social.navachar.co:443/';
-	let client: EventsClient;
-	if (socialURL) {
-		client = new EventsClient(socialURL);
-	}
-	return () => {
-		return client;
-	};
-})();
+import { getEventsClient } from './event';
 
 // Function to create GetEventFeedRequest
 const getEventFeedRequest = (pageSize: number, pageNumber: number, filters: EventFeedFilters) => {

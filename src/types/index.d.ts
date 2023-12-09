@@ -71,22 +71,22 @@ export interface IEvent {
     tags?: string[];
 }
 
-interface Location {
+export interface Location {
     lat: number;
     long: number;
 }
 
-interface MediaUrl {
+export interface MediaUrl {
     url: string;
-    type: 'IMAGE' | 'VIDEO'; // Add more types as needed
+    mimeType: string;
 }
 
-interface WebPreview {
+export interface WebPreview {
     url: string;
     previewImage: string;
 }
 
-interface EventProto {
+export interface EventProto {
     eventId: string;
     title: string;
     createdOn: number;
@@ -105,3 +105,27 @@ interface EventProto {
     webPreviews: WebPreview[];
     FeedUserReactions: string[];
 }
+
+export interface IGetFeedRequest {
+    filters: FeedFilters;
+    referencePost: string;
+    pageSize: number; // int32 in proto
+    pageNumber: number; // int32 in proto
+}
+
+export interface FeedFilters {
+    tag: string;
+    userId: string;
+    createdBy: string;
+    postType: PostType;
+    contentType: string[];
+    type: string[];
+    fetchUserCommentedPosts: boolean;
+    fetchUserReactedPosts: boolean;
+}
+
+export enum PostType {
+    FEED_POST = 0,
+    QNA_QUESTION = 1,
+    QNA_ANSWER = 2,
+  }

@@ -1,25 +1,39 @@
+/* eslint-disable */
+
 // Copyright 2022-2023 @Kotlang/navachaar-admin-portal authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, DatePicker, Form, Input, InputNumber, InputRef, Radio, Space, Tag, Tooltip } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+	Button,
+	DatePicker,
+	Form,
+	Input,
+	InputNumber,
+	InputRef,
+	Radio,
+	Space,
+	Tag,
+	Tooltip
+} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
+import { Metadata, RpcError } from 'grpc-web';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
+import { WebPreview, MediaUrl } from 'src/generated/commons_pb'
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import clients from 'src/clients';
-import { EventType } from 'src/generated/events_pb';
+import { EventProto, EventType } from 'src/generated/events_pb';
 import { IEvent } from 'src/types';
-import { EventProto } from 'src/types/index';
-
-import { mockEvents } from './mockdb';
 
 const { RangePicker } = DatePicker;
 
 const Events = () => {
 	const [tags, setTags] = useState<string[]>([]);
+	const [mediaurls, setMediaurls] = useState<Array<MediaUrl.AsObject>>([]);
+	const [webpreviews, setWebPreview] = useState<Array<WebPreview.AsObject>>([]);
 	const [inputVisible, setInputVisible] = useState(false);
 	const [inputValue, setInputValue] = useState('');
 	const [editInputIndex, setEditInputIndex] = useState(-1);
@@ -31,37 +45,67 @@ const Events = () => {
 	const { eventId } = useParams();
 	const isEditMode = eventId != null;
 
-	const fetchEventById = async (eventId: string): Promise<EventProto | undefined> => {
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				const event = mockEvents.find(event => event.eventId === eventId);
-				resolve(event);
-			}, 1000);
+	const fetchEventById = (eventId: string, metaData: Metadata | null): Promise<EventProto> => {
+		return new Promise((resolve, reject) => {
+			clients.social.event.GetEvent(eventId, metaData, (err: RpcError, response: EventProto) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(response);
+				}
+			});
 		});
 	};
-	if (isEditMode) {
-		fetchEventById(eventId).then((eventData) => {
-			if (eventData) {
-				form.setFieldsValue({
-					description: eventData.description,
-					eventTime: [
-						moment(eventData.endAt),
-						moment(eventData.startAt)
-					],
-					eventType: eventData.type,
-					latitude: eventData.location.lat,
-					longitude: eventData.location.long,
-					mediaUrls: eventData.mediaUrls.map(urlObj => urlObj.url).join(', '),
-					name: eventData.title,
-					numAttendees: eventData.numAttendees,
-					numSlots: eventData.numSlots,
-					onlineLink: eventData.onlineLink,
-					webPreviews: eventData.webPreviews.map(preview => preview.url).join(', ')
-				});
-				setTags(eventData.tags);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			if (isEditMode) {
+				try {
+					setLoading(true);
+					const eventData = await fetchEventById(eventId, {});
+					const fetchedMediaUrls = eventData.getMediaurlsList() || [];
+					const fetchedWebPreviews = eventData.getWebpreviewsList() || [];
+					const tag = eventData.getTagsList() || [];
+					setTags(tag);
+					setMediaurls(fetchedMediaUrls.map(mediaUrl => ({
+						url: mediaUrl.getUrl(),
+						mimetype: mediaUrl.getMimetype(),
+					}))); 	
+					setWebPreview(fetchedWebPreviews.map(webpreviews => ({
+						title: webpreviews.getTitle(),
+						previewimage: webpreviews.getPreviewimage(),
+						url: webpreviews.getUrl(),
+						description: webpreviews.getDescription()
+					}))); 	
+					form.setFieldsValue({
+						description: eventData.getDescription(),
+						eventTime: [moment(eventData.getStartat()), moment(eventData.getEndat())],
+						eventType: eventData.getType(),
+						latitude: eventData.getLocation()?.getLat(),
+						longitude: eventData.getLocation()?.getLong(),
+						numAttendees: eventData.getNumattendees(),
+						numSlots: eventData.getNumslots(),
+						onlineLink: eventData.getOnlinelink(),
+						title: eventData.getTitle(),
+					});
+					setLoading(false);
+				} catch (error) {
+					setLoading(false);
+					console.error('Error fetching event data:', error);
+				}
 			}
-		});
-	}
+		};
+
+		fetchData();
+	}, [isEditMode, eventId, form]);
+
+	useEffect(() => {
+		form.setFieldsValue({
+			mediaUrls: mediaurls,
+			webPreviews:webpreviews,
+			tags: tags
+		})
+	  }, [mediaurls]);
 
 	useEffect(() => {
 		if (inputVisible) {
@@ -118,6 +162,18 @@ const Events = () => {
 		height: 22
 	};
 	const onSubmit = async (values: any) => {
+		const mediaUrls = values.mediaUrls.map((mediaUrl: any) => ({
+			mimeType: mediaUrl.mimeType,
+			url: mediaUrl.url
+		}));
+
+		// Set the values for webPreviews
+		const webPreviews = values.webPreviews.map((webPreview: any) => ({
+			description: webPreview.description,
+			previewImage: webPreview.previewimage,
+			title: webPreview.title,
+			url: webPreview.url
+		}));
 		await form.validateFields();
 		const event: IEvent = {
 			description: values.description,
@@ -126,20 +182,23 @@ const Events = () => {
 				lat: values.latitude,
 				long: values.longitude
 			},
+			mediaUrls: mediaUrls,
 			numAttendees: values.numAttendees,
 			numSlots: values.numSlots,
 			onlineLink: values.onlineLink,
 			startAt: values.eventTime[0],
 			tags: tags,
 			title: values.title,
-			type: values.eventType
+			type: values.eventType,
+			webPreviews: webPreviews
 		};
 		try {
 			setLoading(true);
-			clients.social.event.CreateEvent(event, {}, (err) => {
+			clients.social.event.CreateEvent(event, {}, (err, response) => {
 				if (err) {
 					console.log('Before:-', err);
 				} else {
+					console.log(response);
 					toast('Post created successfully.');
 				}
 				setLoading(false);
@@ -153,7 +212,7 @@ const Events = () => {
 	return (
 		<Form
 			form={form}
-			className='bg-white rounded-md shadow-md p-5'
+			className="bg-white rounded-md shadow-md p-5"
 			initialValues={{
 				eventType: EventType.ONLINE
 			}}
@@ -161,189 +220,209 @@ const Events = () => {
 			disabled={loading}
 		>
 			<Form.Item
-				name='eventType'
-				label='Event Type'
-				rules={
-					[
-						{
-							message: 'Event type is required.',
-							required: true
-						}
-					]
-				}
+				name="eventType"
+				label="Event Type"
+				rules={[
+					{
+						message: 'Event type is required.',
+						required: true
+					}
+				]}
 			>
-				<Radio.Group
-					disabled={loading} buttonStyle="solid">
+				<Radio.Group disabled={loading} buttonStyle="solid">
 					<Radio.Button value={EventType.ONLINE}>Online</Radio.Button>
 					<Radio.Button value={EventType.OFFLINE}>Offline</Radio.Button>
 				</Radio.Group>
 			</Form.Item>
 			<Form.Item
 				name="eventTime"
-				label='Event Dates'
-				rules={
-					[
-						{
-							message: 'Event dates is required.',
-							required: true
-						}
-					]
-				}
+				label="Event Dates"
+				rules={[
+					{
+						message: 'Event dates is required.',
+						required: true
+					}
+				]}
 			>
 				<RangePicker disabled={loading} showTime />
 			</Form.Item>
 			<Form.Item
-				name="name"
-				label='Event Name'
-				className='max-w-[493px]'
-				rules={
-					[
-						{
-							message: 'Event name is required.',
-							required: true
-						}
-					]
-				}
+				name="title"
+				label="Event title"
+				className="max-w-[493px]"
+				rules={[
+					{
+						message: 'Event name is required.',
+						required: true
+					}
+				]}
 			>
-				<Input
-					disabled={loading}
-					placeholder='eg. Agri'
-				/>
+				<Input disabled={loading} placeholder="eg. Agri" />
 			</Form.Item>
 			<Form.Item
 				name="description"
-				label='Event Description'
-				className='max-w-[493px]'
-				rules={
-					[
-						{
-							message: 'Event description is required.',
-							required: true
-						}
-					]
-				}
+				label="Event Description"
+				className="max-w-[493px]"
+				rules={[
+					{
+						message: 'Event description is required.',
+						required: true
+					}
+				]}
 			>
 				<TextArea
 					disabled={loading}
-					placeholder='eg. All about organic farming'
+					placeholder="eg. All about organic farming"
 				/>
 			</Form.Item>
 			<Form.Item
 				name="onlineLink"
-				label='Event Online Link'
-				className='max-w-[493px]'
-				rules={
-					[
-						{
-							message: 'Event online link is required.',
-							validator(rule, value, callback) {
-								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.ONLINE && !value) {
-									callback(rule?.message?.toString());
-								} else {
-									callback();
-								}
+				label="Event Online Link"
+				className="max-w-[493px]"
+				rules={[
+					{
+						message: 'Event online link is required.',
+						validator(rule, value, callback) {
+							const otherFieldValue = form.getFieldValue('eventType');
+							if (otherFieldValue === EventType.ONLINE && !value) {
+								callback(rule?.message?.toString());
+							} else {
+								callback();
 							}
 						}
-					]
-				}
+					}
+				]}
 			>
 				<Input
 					disabled={loading}
-					placeholder='eg. https://meet.google.com/wwu-wdaj-znk'
+					placeholder="eg. https://meet.google.com/wwu-wdaj-znk"
 				/>
 			</Form.Item>
 
 			<Form.Item
 				name="latitude"
-				label='Event location latitude'
-				rules={
-					[
-						{
-							message: 'Event location latitude is required.',
-							validator(rule, value, callback) {
-								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.OFFLINE && !value) {
-									callback(rule?.message?.toString());
-								} else {
-									callback();
-								}
+				label="Event location latitude"
+				rules={[
+					{
+						message: 'Event location latitude is required.',
+						validator(rule, value, callback) {
+							const otherFieldValue = form.getFieldValue('eventType');
+							if (otherFieldValue === EventType.OFFLINE && !value) {
+								callback(rule?.message?.toString());
+							} else {
+								callback();
 							}
 						}
-					]
-				}
+					}
+				]}
 			>
-				<InputNumber
-					disabled={loading}
-					type='number'
-					placeholder='Latitude'
-				/>
+				<InputNumber disabled={loading} type="number" placeholder="Latitude" />
 			</Form.Item>
 			<Form.Item
 				name="longitude"
-				label='Event location longitude'
-				rules={
-					[
-						{
-							message: 'Event location longitude is required.',
-							validator(rule, value, callback) {
-								const otherFieldValue = form.getFieldValue('eventType');
-								if (otherFieldValue === EventType.OFFLINE && !value) {
-									callback(rule?.message?.toString());
-								} else {
-									callback();
-								}
+				label="Event location longitude"
+				rules={[
+					{
+						message: 'Event location longitude is required.',
+						validator(rule, value, callback) {
+							const otherFieldValue = form.getFieldValue('eventType');
+							if (otherFieldValue === EventType.OFFLINE && !value) {
+								callback(rule?.message?.toString());
+							} else {
+								callback();
 							}
 						}
-					]
-				}
+					}
+				]}
 			>
-				<InputNumber
-					disabled={loading}
-					type='number'
-					placeholder='longitude'
-				/>
+				<InputNumber disabled={loading} type="number" placeholder="longitude" />
 			</Form.Item>
 			{/* Media URLs */}
-			<Form.Item
-				name='mediaUrls'
-				label='Media URLs'
-				className='max-w-[493px]'
-				rules={[
-					{
-						message: 'Media URLs are required.',
-						required: true
-					}
-				]}
-			>
-				<Input
-					disabled={loading}
-					placeholder='Enter media URLs, separated by commas'
-				/>
-			</Form.Item>
+			<div className="mb-4">
+				<Form.List name="mediaUrls">
+					{(fields, { add, remove }) => (
+						<div className="space-y-2">
+							{fields.map(({ key, name, ...restField }) => (
+								<div key={key} className="flex items-center space-x-2">
+									<Form.Item
+										{...restField}
+										name={[name, 'url']}
+										rules={[{ message: 'Please input URL', required: true }]}
+										className="flex-1"
+									>
+										<Input placeholder="URL" />
+									</Form.Item>
+									<Form.Item
+										{...restField}
+										name={[name, 'mimetype']}
+										rules={[{ message: 'Please input MIME type', required: true }]}
+										className="flex-1"
+									>
+										<Input placeholder="MIME Type" />
+									</Form.Item>
+									<MinusCircleOutlined className="text-red-500" onClick={() => remove(name)} />
+								</div>
+							))}
+							<Button type="dashed" onClick={() => add()} className="w-auto mt-2">
+								<PlusOutlined /> Add Media URL
+							</Button>
+						</div>
+					)}
+				</Form.List>
+			</div>
 
 			{/* Web Previews */}
-			<Form.Item
-				name='webPreviews'
-				label='Web Previews'
-				className='max-w-[493px]'
-				rules={[
-					{
-						message: 'Web Previews are required.',
-						required: true
-					}
-				]}
-			>
-				<Input
-					disabled={loading}
-					placeholder='Enter web previews, separated by commas'
-				/>
-			</Form.Item>
 
+			<div className="mb-4">
+				<Form.List name="webPreviews" initialValue={webpreviews}>
+					{(fields, { add, remove }) => (
+						<div className="space-y-2">
+							{fields.map(({ key, name, ...restField }) => (
+								<div key={key} className="flex flex-wrap items-center space-x-2">
+									<Form.Item
+										{...restField}
+										name={[name, 'title']}
+										rules={[{ message: 'Please input title', required: true }]}
+										className="flex-1"
+									>
+										<Input placeholder="Title" />
+									</Form.Item>
+									<Form.Item
+										{...restField}
+										name={[name, 'previewimage']}
+										className="flex-1"
+									>
+										<Input placeholder="Preview Image URL" />
+									</Form.Item>
+									<Form.Item
+										{...restField}
+										name={[name, 'url']}
+										rules={[{ message: 'Please input URL', required: true }]}
+										className="flex-1"
+									>
+										<Input placeholder="URL" />
+									</Form.Item>
+									<Form.Item
+										{...restField}
+										name={[name, 'description']}
+										className="flex-1"
+									>
+										<Input placeholder="Description" />
+									</Form.Item>
+									<MinusCircleOutlined className="text-red-500" onClick={() => remove(name)} />
+								</div>
+							))}
+							<Button type="dashed" onClick={() => add()} className="w-auto mt-2">
+								<PlusOutlined /> Add Web Preview
+							</Button>
+						</div>
+					)}
+				</Form.List>
+			</div>
 			{/* Num Attendees */}
 			<Form.Item
-				name='numAttendees'
-				label='Number of Attendees'
+				name="numAttendees"
+				label="Number of Attendees"
 				rules={[
 					{
 						message: 'Number of attendees is required.',
@@ -351,16 +430,13 @@ const Events = () => {
 					}
 				]}
 			>
-				<InputNumber
-					type='number'
-					placeholder='attendees'
-				/>
+				<InputNumber type="number" placeholder="attendees" />
 			</Form.Item>
 
 			{/* Num Slots */}
 			<Form.Item
-				name='numSlots'
-				label='Number of Slots'
+				name="numSlots"
+				label="Number of Slots"
 				rules={[
 					{
 						message: 'Number of slots is required.',
@@ -368,17 +444,9 @@ const Events = () => {
 					}
 				]}
 			>
-				<InputNumber
-					disabled={loading}
-					type='number'
-					placeholder='slots'
-				/>
+				<InputNumber disabled={loading} type="number" placeholder="slots" />
 			</Form.Item>
-			<Form.Item
-				name="tags"
-				label='Tags'
-				className='max-w-[493px]'
-			>
+			<Form.Item name="tags" label="Tags" className="max-w-[493px]">
 				<Space size={[0, 8]} wrap>
 					{tags.map((tag, index) => {
 						if (editInputIndex === index) {
@@ -445,10 +513,7 @@ const Events = () => {
 				</Space>
 			</Form.Item>
 			<Form.Item>
-				<Button
-					disabled={loading}
-					htmlType='submit'
-				>
+				<Button disabled={loading} htmlType="submit">
 					{isEditMode ? 'Save' : 'Create'}
 				</Button>
 			</Form.Item>

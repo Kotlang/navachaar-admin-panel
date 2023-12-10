@@ -10,7 +10,7 @@ import { StatusResponse } from 'src/generated/common_pb';
 import { ILabel } from 'src/types';
 
 const getAdminClient = (() => {
-	const localizationURL = 'https://localization.navachar.co:443/';
+	const localizationURL = process.env.REACT_APP_LOCALIZATION_URL;
 	let client: LocalizationAdminClient;
 	if (localizationURL) {
 		client = new LocalizationAdminClient(localizationURL);

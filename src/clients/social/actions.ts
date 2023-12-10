@@ -8,7 +8,7 @@ import { actionsClient } from 'src/generated/ActionsServiceClientPb';
 import { addJwtToken } from '../utils';
 
 export const getActionsClient = (() => {
-	const socialURL = 'https://social.navachar.co:443/';
+	const socialURL = process.env.REACT_APP_SOCIAL_URL;
 	let client: actionsClient;
 	if (socialURL) {
 		client = new actionsClient(socialURL);

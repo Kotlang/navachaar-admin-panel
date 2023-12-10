@@ -7,7 +7,7 @@ import { UserPostClient } from 'src/generated/SocialServiceClientPb';
 import { IGetFeedRequest, PostType } from 'src/types/index';
 
 const getUserPostClient = (() => {
-	const socialURL = 'https://social.navachar.co:443/';
+	const socialURL = process.env.REACT_APP_SOCIAL_URL;
 	let client: UserPostClient;
 	if (socialURL) {
 		client = new UserPostClient(socialURL);

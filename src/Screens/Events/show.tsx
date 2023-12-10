@@ -8,7 +8,6 @@ import EventClient from 'src/clients/social/listevents';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import clients from 'src/clients';
-import { toast } from 'react-toastify';
 
 function convertUnixTimeToDateTime(unixTimeInSeconds: number): string {
 	const milliseconds = unixTimeInSeconds * 1000;

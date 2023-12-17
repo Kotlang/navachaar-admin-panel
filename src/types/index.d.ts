@@ -46,8 +46,9 @@ export interface ILabel {
 }
 
 export interface IEvent {
+    id?: string;
     title?: string;
-    type: EventType;
+    type?: EventType;
     startAt?: dayjs.Dayjs;
     endAt?: dayjs.Dayjs;
     mediaUrls?: {

@@ -43,29 +43,30 @@ const MonitorEvent: React.FC = () => {
     });
   };
 
-  if (eventId) {
-    fetchEventById(eventId, {})
-      .then((eventData) => {
-        setEventDetails(eventData);
-        // console.log(eventData.getNumreactsMap())
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching event:', error);
-      });
+  useEffect(() => {
+    if (eventId) {
+      fetchEventById(eventId, {})
+        .then((eventData) => {
+          setEventDetails(eventData);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching event:', error);
+        });
 
       // Fetchcomments 
       const pageNumber = 1;
       const pageSize = 0;
 
       fetchCommetsByID(eventId, pageNumber, pageSize, {})
-      .then((commnentData)=>{
-        setComments(commnentData.getCommentsList());
-      })
-      .catch((err)=>{
-        console.error('Error fetching comments')
-      })
-  }
+        .then((commnentData) => {
+          setComments(commnentData.getCommentsList());
+        })
+        .catch((err) => {
+          console.error('Error fetching comments')
+        })
+    }
+  })
 
   if (loading) return <div>Loading...</div>;
 

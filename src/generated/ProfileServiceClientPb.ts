@@ -255,5 +255,48 @@ export class ProfileClient {
     this.methodDescriptorgetProfilesByAttribute);
   }
 
+  methodDescriptorgetProfileByPhoneOrEmail = new grpcWeb.MethodDescriptor(
+    '/login.Profile/getProfileByPhoneOrEmail',
+    grpcWeb.MethodType.UNARY,
+    profile_pb.GetProfileByPhoneOrEmailRequest,
+    common_pb.UserProfileProto,
+    (request: profile_pb.GetProfileByPhoneOrEmailRequest) => {
+      return request.serializeBinary();
+    },
+    common_pb.UserProfileProto.deserializeBinary
+  );
+
+  getProfileByPhoneOrEmail(
+    request: profile_pb.GetProfileByPhoneOrEmailRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<common_pb.UserProfileProto>;
+
+  getProfileByPhoneOrEmail(
+    request: profile_pb.GetProfileByPhoneOrEmailRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: common_pb.UserProfileProto) => void): grpcWeb.ClientReadableStream<common_pb.UserProfileProto>;
+
+  getProfileByPhoneOrEmail(
+    request: profile_pb.GetProfileByPhoneOrEmailRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: common_pb.UserProfileProto) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/login.Profile/getProfileByPhoneOrEmail',
+        request,
+        metadata || {},
+        this.methodDescriptorgetProfileByPhoneOrEmail,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/login.Profile/getProfileByPhoneOrEmail',
+    request,
+    metadata || {},
+    this.methodDescriptorgetProfileByPhoneOrEmail);
+  }
+
 }
 

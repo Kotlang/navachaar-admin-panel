@@ -43,9 +43,6 @@ export class CreateProfileRequest extends jspb.Message {
   getYearssinceorganicfarming(): number;
   setYearssinceorganicfarming(value: number): CreateProfileRequest;
 
-  getMetadatamap(): string;
-  setMetadatamap(value: string): CreateProfileRequest;
-
   getLandsizeinacres(): common_pb.LandSizeInAcres;
   setLandsizeinacres(value: common_pb.LandSizeInAcres): CreateProfileRequest;
 
@@ -75,7 +72,6 @@ export namespace CreateProfileRequest {
     attributesList: Array<string>,
     certificationdetails?: common_pb.CertificationDetails.AsObject,
     yearssinceorganicfarming: number,
-    metadatamap: string,
     landsizeinacres: common_pb.LandSizeInAcres,
     location?: common_pb.Location.AsObject,
   }
@@ -256,6 +252,28 @@ export class BulkGetProfileResponse extends jspb.Message {
 export namespace BulkGetProfileResponse {
   export type AsObject = {
     profilesList: Array<common_pb.UserProfileProto.AsObject>,
+  }
+}
+
+export class GetProfileByPhoneOrEmailRequest extends jspb.Message {
+  getPhone(): string;
+  setPhone(value: string): GetProfileByPhoneOrEmailRequest;
+
+  getEmail(): string;
+  setEmail(value: string): GetProfileByPhoneOrEmailRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetProfileByPhoneOrEmailRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetProfileByPhoneOrEmailRequest): GetProfileByPhoneOrEmailRequest.AsObject;
+  static serializeBinaryToWriter(message: GetProfileByPhoneOrEmailRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetProfileByPhoneOrEmailRequest;
+  static deserializeBinaryFromReader(message: GetProfileByPhoneOrEmailRequest, reader: jspb.BinaryReader): GetProfileByPhoneOrEmailRequest;
+}
+
+export namespace GetProfileByPhoneOrEmailRequest {
+  export type AsObject = {
+    phone: string,
+    email: string,
   }
 }
 

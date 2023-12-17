@@ -27,6 +27,8 @@ import { toast } from 'react-toastify';
 import clients from 'src/clients';
 import { EventProto, EventType } from 'src/generated/events_pb';
 import { IEvent } from 'src/types';
+import EventPreview from './preview';
+import { useNavigate } from 'react-router-dom';
 
 const { RangePicker } = DatePicker;
 
@@ -42,8 +44,10 @@ const Events = () => {
 	const editInputRef = useRef<InputRef>(null);
 	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
+	const [formdata, setFormData] = useState<IEvent>();
 	const { eventId } = useParams();
 	const isEditMode = eventId != null;
+	const navigate = useNavigate();
 
 	const fetchEventById = (eventId: string, metaData: Metadata | null): Promise<EventProto> => {
 		return new Promise((resolve, reject) => {
@@ -63,20 +67,20 @@ const Events = () => {
 				try {
 					setLoading(true);
 					const eventData = await fetchEventById(eventId, {});
+					console.log(eventData);
 					const fetchedMediaUrls = eventData.getMediaurlsList() || [];
 					const fetchedWebPreviews = eventData.getWebpreviewsList() || [];
-					const tag = eventData.getTagsList() || [];
-					setTags(tag);
+					// const tag = eventData.getTagsList() || [];
 					setMediaurls(fetchedMediaUrls.map(mediaUrl => ({
 						url: mediaUrl.getUrl(),
 						mimetype: mediaUrl.getMimetype(),
-					}))); 	
+					})));
 					setWebPreview(fetchedWebPreviews.map(webpreviews => ({
 						title: webpreviews.getTitle(),
 						previewimage: webpreviews.getPreviewimage(),
 						url: webpreviews.getUrl(),
 						description: webpreviews.getDescription()
-					}))); 	
+					})));
 					form.setFieldsValue({
 						description: eventData.getDescription(),
 						eventTime: [moment(eventData.getStartat()), moment(eventData.getEndat())],
@@ -102,10 +106,10 @@ const Events = () => {
 	useEffect(() => {
 		form.setFieldsValue({
 			mediaUrls: mediaurls,
-			webPreviews:webpreviews,
+			webPreviews: webpreviews,
 			tags: tags
 		})
-	  }, [mediaurls]);
+	}, [mediaurls, webpreviews, tags]);
 
 	useEffect(() => {
 		if (inputVisible) {
@@ -116,6 +120,30 @@ const Events = () => {
 	useEffect(() => {
 		editInputRef.current?.focus();
 	}, [editInputValue]);
+
+	const refreshPreview = () => {
+		const values = form.getFieldsValue();
+		if (Array.isArray(values.eventTime) && values.eventTime.length >= 2) {
+			const newEventData: IEvent = {
+				title: values.title,
+				type: values.eventType,
+				startAt: values?.eventTime[0],
+				endAt: values?.eventTime[1],
+				mediaUrls: values.mediaUrls,
+				webPreviews: values.webPreviews,
+				description: values.description,
+				numAttendees: values.numAttendees,
+				numSlots: values.numSlots,
+				location: {
+					lat: values.latitude,
+					long: values.longitude
+				},
+				onlineLink: values.onlineLink,
+				tags: values.tags
+			};
+			setFormData(newEventData);
+		}
+    };
 
 	const handleClose = (removedTag: string) => {
 		const newTags = tags.filter((tag) => tag !== removedTag);
@@ -161,6 +189,7 @@ const Events = () => {
 		borderStyle: 'dashed',
 		height: 22
 	};
+
 	const onSubmit = async (values: any) => {
 		const mediaUrls = values.mediaUrls.map((mediaUrl: any) => ({
 			mimeType: mediaUrl.mimeType,
@@ -176,6 +205,7 @@ const Events = () => {
 		}));
 		await form.validateFields();
 		const event: IEvent = {
+			id: eventId,
 			description: values.description,
 			endAt: values.eventTime[1],
 			location: {
@@ -194,330 +224,353 @@ const Events = () => {
 		};
 		try {
 			setLoading(true);
-			clients.social.event.CreateEvent(event, {}, (err, response) => {
-				if (err) {
-					console.log('Before:-', err);
-				} else {
-					console.log(response);
-					toast('Post created successfully.');
-				}
-				setLoading(false);
-				form.resetFields();
-			});
+			if(isEditMode){
+				clients.social.event.EditEvent(event, {}, (err, response)=>{
+					if (err) {
+						console.log('Before:-', err);
+					} else {
+						console.log(response);
+						toast('Event Updated successfully.');
+						navigate('/events/show')
+					}
+					setLoading(false);
+				})
+			}else{
+				clients.social.event.CreateEvent(event, {}, (err, response) => {
+					if (err) {
+						console.log('Before:-', err);
+					} else {
+						console.log(response);
+						toast('Event created successfully.');
+					}
+					setLoading(false);
+					form.resetFields();
+				});
+			}
 		} catch (error) {
 			console.log('Catch:-', error);
 			setLoading(false);
 		}
 	};
+
 	return (
-		<Form
-			form={form}
-			className="bg-white rounded-md shadow-md p-5"
-			initialValues={{
-				eventType: EventType.ONLINE
-			}}
-			onFinish={onSubmit}
-			disabled={loading}
-		>
-			<Form.Item
-				name="eventType"
-				label="Event Type"
-				rules={[
-					{
-						message: 'Event type is required.',
-						required: true
-					}
-				]}
+		<div className='flex'>
+			<Form
+				form={form}
+				className="bg-white rounded-md shadow-md p-5"
+				initialValues={{
+					eventType: EventType.ONLINE
+				}}
+				onFinish={onSubmit}
+				disabled={loading}
 			>
-				<Radio.Group disabled={loading} buttonStyle="solid">
-					<Radio.Button value={EventType.ONLINE}>Online</Radio.Button>
-					<Radio.Button value={EventType.OFFLINE}>Offline</Radio.Button>
-				</Radio.Group>
-			</Form.Item>
-			<Form.Item
-				name="eventTime"
-				label="Event Dates"
-				rules={[
-					{
-						message: 'Event dates is required.',
-						required: true
-					}
-				]}
-			>
-				<RangePicker disabled={loading} showTime />
-			</Form.Item>
-			<Form.Item
-				name="title"
-				label="Event title"
-				className="max-w-[493px]"
-				rules={[
-					{
-						message: 'Event name is required.',
-						required: true
-					}
-				]}
-			>
-				<Input disabled={loading} placeholder="eg. Agri" />
-			</Form.Item>
-			<Form.Item
-				name="description"
-				label="Event Description"
-				className="max-w-[493px]"
-				rules={[
-					{
-						message: 'Event description is required.',
-						required: true
-					}
-				]}
-			>
-				<TextArea
-					disabled={loading}
-					placeholder="eg. All about organic farming"
-				/>
-			</Form.Item>
-			<Form.Item
-				name="onlineLink"
-				label="Event Online Link"
-				className="max-w-[493px]"
-				rules={[
-					{
-						message: 'Event online link is required.',
-						validator(rule, value, callback) {
-							const otherFieldValue = form.getFieldValue('eventType');
-							if (otherFieldValue === EventType.ONLINE && !value) {
-								callback(rule?.message?.toString());
-							} else {
-								callback();
+				<Form.Item
+					name="eventType"
+					label="Event Type"
+					rules={[
+						{
+							message: 'Event type is required.',
+							required: true
+						}
+					]}
+				>
+					<Radio.Group disabled={loading} buttonStyle="solid">
+						<Radio.Button value={EventType.ONLINE}>Online</Radio.Button>
+						<Radio.Button value={EventType.OFFLINE}>Offline</Radio.Button>
+					</Radio.Group>
+				</Form.Item>
+				<Form.Item
+					name="eventTime"
+					label="Event Dates"
+					rules={[
+						{
+							message: 'Event dates is required.',
+							required: true
+						}
+					]}
+				>
+					<RangePicker disabled={loading} showTime />
+				</Form.Item>
+				<Form.Item
+					name="title"
+					label="Event title"
+					className="max-w-[493px]"
+					rules={[
+						{
+							message: 'Event name is required.',
+							required: true
+						}
+					]}
+				>
+					<Input disabled={loading} placeholder="eg. Agri" />
+				</Form.Item>
+				<Form.Item
+					name="description"
+					label="Event Description"
+					className="max-w-[493px]"
+					rules={[
+						{
+							message: 'Event description is required.',
+							required: true
+						}
+					]}
+				>
+					<TextArea
+						disabled={loading}
+						placeholder="eg. All about organic farming"
+					/>
+				</Form.Item>
+				<Form.Item
+					name="onlineLink"
+					label="Event Online Link"
+					className="max-w-[493px]"
+					rules={[
+						{
+							message: 'Event online link is required.',
+							validator(rule, value, callback) {
+								const otherFieldValue = form.getFieldValue('eventType');
+								if (otherFieldValue === EventType.ONLINE && !value) {
+									callback(rule?.message?.toString());
+								} else {
+									callback();
+								}
 							}
 						}
-					}
-				]}
-			>
-				<Input
-					disabled={loading}
-					placeholder="eg. https://meet.google.com/wwu-wdaj-znk"
-				/>
-			</Form.Item>
+					]}
+				>
+					<Input
+						disabled={loading}
+						placeholder="eg. https://meet.google.com/wwu-wdaj-znk"
+					/>
+				</Form.Item>
 
-			<Form.Item
-				name="latitude"
-				label="Event location latitude"
-				rules={[
-					{
-						message: 'Event location latitude is required.',
-						validator(rule, value, callback) {
-							const otherFieldValue = form.getFieldValue('eventType');
-							if (otherFieldValue === EventType.OFFLINE && !value) {
-								callback(rule?.message?.toString());
-							} else {
-								callback();
+				<Form.Item
+					name="latitude"
+					label="Event location latitude"
+					rules={[
+						{
+							message: 'Event location latitude is required.',
+							validator(rule, value, callback) {
+								const otherFieldValue = form.getFieldValue('eventType');
+								if (otherFieldValue === EventType.OFFLINE && !value) {
+									callback(rule?.message?.toString());
+								} else {
+									callback();
+								}
 							}
 						}
-					}
-				]}
-			>
-				<InputNumber disabled={loading} type="number" placeholder="Latitude" />
-			</Form.Item>
-			<Form.Item
-				name="longitude"
-				label="Event location longitude"
-				rules={[
-					{
-						message: 'Event location longitude is required.',
-						validator(rule, value, callback) {
-							const otherFieldValue = form.getFieldValue('eventType');
-							if (otherFieldValue === EventType.OFFLINE && !value) {
-								callback(rule?.message?.toString());
-							} else {
-								callback();
+					]}
+				>
+					<InputNumber disabled={loading} type="number" placeholder="Latitude" />
+				</Form.Item>
+				<Form.Item
+					name="longitude"
+					label="Event location longitude"
+					rules={[
+						{
+							message: 'Event location longitude is required.',
+							validator(rule, value, callback) {
+								const otherFieldValue = form.getFieldValue('eventType');
+								if (otherFieldValue === EventType.OFFLINE && !value) {
+									callback(rule?.message?.toString());
+								} else {
+									callback();
+								}
 							}
 						}
-					}
-				]}
-			>
-				<InputNumber disabled={loading} type="number" placeholder="longitude" />
-			</Form.Item>
-			{/* Media URLs */}
-			<div className="mb-4">
-				<Form.List name="mediaUrls">
-					{(fields, { add, remove }) => (
-						<div className="space-y-2">
-							{fields.map(({ key, name, ...restField }) => (
-								<div key={key} className="flex items-center space-x-2">
-									<Form.Item
-										{...restField}
-										name={[name, 'url']}
-										rules={[{ message: 'Please input URL', required: true }]}
-										className="flex-1"
-									>
-										<Input placeholder="URL" />
-									</Form.Item>
-									<Form.Item
-										{...restField}
-										name={[name, 'mimetype']}
-										rules={[{ message: 'Please input MIME type', required: true }]}
-										className="flex-1"
-									>
-										<Input placeholder="MIME Type" />
-									</Form.Item>
-									<MinusCircleOutlined className="text-red-500" onClick={() => remove(name)} />
-								</div>
-							))}
-							<Button type="dashed" onClick={() => add()} className="w-auto mt-2">
-								<PlusOutlined /> Add Media URL
-							</Button>
-						</div>
-					)}
-				</Form.List>
-			</div>
+					]}
+				>
+					<InputNumber disabled={loading} type="number" placeholder="longitude" />
+				</Form.Item>
+				{/* Media URLs */}
+				<div className="mb-4">
+					<Form.List name="mediaUrls">
+						{(fields, { add, remove }) => (
+							<div className="space-y-2">
+								{fields.map(({ key, name, ...restField }) => (
+									<div key={key} className="flex flex-col space-y-2">
+										<Form.Item
+											{...restField}
+											name={[name, 'url']}
+											rules={[{ message: 'Please input URL', required: true }]}
+											className="flex-1 max-w-[493px]" // Set the max width here
+										>
+											<Input placeholder="URL" />
+										</Form.Item>
+										<Form.Item
+											{...restField}
+											name={[name, 'mimetype']}
+											rules={[{ message: 'Please input MIME type', required: true }]}
+											className="flex-1 max-w-[493px]" // Set the max width here
+										>
+											<Input placeholder="MIME Type" />
+										</Form.Item>
+										<MinusCircleOutlined className="text-red-500" onClick={() => remove(name)} />
+									</div>
+								))}
+								<Button type="dashed" onClick={() => add()} className="w-auto mt-2">
+									<PlusOutlined /> Add Media URL
+								</Button>
+							</div>
+						)}
+					</Form.List>
+				</div>
 
-			{/* Web Previews */}
+				{/* Web Previews */}
 
-			<div className="mb-4">
-				<Form.List name="webPreviews" initialValue={webpreviews}>
-					{(fields, { add, remove }) => (
-						<div className="space-y-2">
-							{fields.map(({ key, name, ...restField }) => (
-								<div key={key} className="flex flex-wrap items-center space-x-2">
-									<Form.Item
-										{...restField}
-										name={[name, 'title']}
-										rules={[{ message: 'Please input title', required: true }]}
-										className="flex-1"
-									>
-										<Input placeholder="Title" />
-									</Form.Item>
-									<Form.Item
-										{...restField}
-										name={[name, 'previewimage']}
-										className="flex-1"
-									>
-										<Input placeholder="Preview Image URL" />
-									</Form.Item>
-									<Form.Item
-										{...restField}
-										name={[name, 'url']}
-										rules={[{ message: 'Please input URL', required: true }]}
-										className="flex-1"
-									>
-										<Input placeholder="URL" />
-									</Form.Item>
-									<Form.Item
-										{...restField}
-										name={[name, 'description']}
-										className="flex-1"
-									>
-										<Input placeholder="Description" />
-									</Form.Item>
-									<MinusCircleOutlined className="text-red-500" onClick={() => remove(name)} />
-								</div>
-							))}
-							<Button type="dashed" onClick={() => add()} className="w-auto mt-2">
-								<PlusOutlined /> Add Web Preview
-							</Button>
-						</div>
-					)}
-				</Form.List>
-			</div>
-			{/* Num Attendees */}
-			<Form.Item
-				name="numAttendees"
-				label="Number of Attendees"
-				rules={[
-					{
-						message: 'Number of attendees is required.',
-						required: true
-					}
-				]}
-			>
-				<InputNumber type="number" placeholder="attendees" />
-			</Form.Item>
+				<div className="mb-4">
+					<Form.List name="webPreviews" initialValue={webpreviews}>
+						{(fields, { add, remove }) => (
+							<div className="space-y-2">
+								{fields.map(({ key, name, ...restField }) => (
+									<div key={key} className="flex flex-col space-y-2">
+										<Form.Item
+											{...restField}
+											name={[name, 'title']}
+											rules={[{ message: 'Please input title', required: true }]}
+											className="flex-1 max-w-[493px]"
+										>
+											<Input placeholder="Title" />
+										</Form.Item>
+										<Form.Item
+											{...restField}
+											name={[name, 'previewimage']}
+											className="flex-1 max-w-[493px]"
+										>
+											<Input placeholder="Preview Image URL" />
+										</Form.Item>
+										<Form.Item
+											{...restField}
+											name={[name, 'url']}
+											rules={[{ message: 'Please input URL', required: true }]}
+											className="flex-1 max-w-[493px]"
+										>
+											<Input placeholder="URL" />
+										</Form.Item>
+										<Form.Item
+											{...restField}
+											name={[name, 'description']}
+											className="flex-1 max-w-[493px]"
+										>
+											<Input placeholder="Description" />
+										</Form.Item>
+										<MinusCircleOutlined className="text-red-500" onClick={() => remove(name)} />
+									</div>
+								))}
+								<Button type="dashed" onClick={() => add()} className="w-auto mt-2">
+									<PlusOutlined /> Add Web Preview
+								</Button>
+							</div>
+						)}
+					</Form.List>
+				</div>
+				{/* Num Attendees */}
+				<Form.Item
+					name="numAttendees"
+					label="Number of Attendees"
+					rules={[
+						{
+							message: 'Number of attendees is required.',
+							required: true
+						}
+					]}
+				>
+					<InputNumber type="number" placeholder="attendees" />
+				</Form.Item>
 
-			{/* Num Slots */}
-			<Form.Item
-				name="numSlots"
-				label="Number of Slots"
-				rules={[
-					{
-						message: 'Number of slots is required.',
-						required: true
-					}
-				]}
-			>
-				<InputNumber disabled={loading} type="number" placeholder="slots" />
-			</Form.Item>
-			<Form.Item name="tags" label="Tags" className="max-w-[493px]">
-				<Space size={[0, 8]} wrap>
-					{tags.map((tag, index) => {
-						if (editInputIndex === index) {
-							return (
-								<Input
-									disabled={loading}
-									ref={editInputRef}
+				{/* Num Slots */}
+				<Form.Item
+					name="numSlots"
+					label="Number of Slots"
+					rules={[
+						{
+							message: 'Number of slots is required.',
+							required: true
+						}
+					]}
+				>
+					<InputNumber disabled={loading} type="number" placeholder="slots" />
+				</Form.Item>
+				<Form.Item name="tags" label="Tags" className="max-w-[493px]">
+					<Space size={[0, 8]} wrap>
+						{tags.map((tag, index) => {
+							if (editInputIndex === index) {
+								return (
+									<Input
+										disabled={loading}
+										ref={editInputRef}
+										key={tag}
+										size="small"
+										style={tagInputStyle}
+										value={editInputValue}
+										onChange={handleEditInputChange}
+										onBlur={handleEditInputConfirm}
+										onPressEnter={handleEditInputConfirm}
+									/>
+								);
+							}
+							const isLongTag = tag.length > 20;
+							const tagElem = (
+								<Tag
 									key={tag}
-									size="small"
-									style={tagInputStyle}
-									value={editInputValue}
-									onChange={handleEditInputChange}
-									onBlur={handleEditInputConfirm}
-									onPressEnter={handleEditInputConfirm}
-								/>
-							);
-						}
-						const isLongTag = tag.length > 20;
-						const tagElem = (
-							<Tag
-								key={tag}
-								closable={!loading}
-								style={{ userSelect: 'none' }}
-								onClose={() => handleClose(tag)}
-							>
-								<span
-									onDoubleClick={(e) => {
-										if (index !== 0) {
-											setEditInputIndex(index);
-											setEditInputValue(tag);
-											e.preventDefault();
-										}
-									}}
+									closable={!loading}
+									style={{ userSelect: 'none' }}
+									onClose={() => handleClose(tag)}
 								>
-									{isLongTag ? `${tag.slice(0, 20)}...` : tag}
-								</span>
-							</Tag>
-						);
-						return isLongTag ? (
-							<Tooltip title={tag} key={tag}>
-								{tagElem}
-							</Tooltip>
+									<span
+										onDoubleClick={(e) => {
+											if (index !== 0) {
+												setEditInputIndex(index);
+												setEditInputValue(tag);
+												e.preventDefault();
+											}
+										}}
+									>
+										{isLongTag ? `${tag.slice(0, 20)}...` : tag}
+									</span>
+								</Tag>
+							);
+							return isLongTag ? (
+								<Tooltip title={tag} key={tag}>
+									{tagElem}
+								</Tooltip>
+							) : (
+								tagElem
+							);
+						})}
+						{inputVisible ? (
+							<Input
+								disabled={loading}
+								ref={inputRef}
+								type="text"
+								size="small"
+								style={tagInputStyle}
+								value={inputValue}
+								onChange={handleInputChange}
+								onBlur={handleInputConfirm}
+								onPressEnter={handleInputConfirm}
+							/>
 						) : (
-							tagElem
-						);
-					})}
-					{inputVisible ? (
-						<Input
-							disabled={loading}
-							ref={inputRef}
-							type="text"
-							size="small"
-							style={tagInputStyle}
-							value={inputValue}
-							onChange={handleInputChange}
-							onBlur={handleInputConfirm}
-							onPressEnter={handleInputConfirm}
-						/>
-					) : (
-						<Tag style={tagPlusStyle} onClick={showInput}>
-							<PlusOutlined /> New Tag
-						</Tag>
-					)}
-				</Space>
-			</Form.Item>
-			<Form.Item>
-				<Button disabled={loading} htmlType="submit">
-					{isEditMode ? 'Save' : 'Create'}
-				</Button>
-			</Form.Item>
-		</Form>
+							<Tag style={tagPlusStyle} onClick={showInput}>
+								<PlusOutlined /> New Tag
+							</Tag>
+						)}
+					</Space>
+				</Form.Item>
+				<Form.Item>
+					<Button disabled={loading} htmlType="submit">
+						{isEditMode ? 'Save' : 'Create'}
+					</Button>
+				</Form.Item>
+			</Form>
+            <div className="flex-1 p-4 bg-gray-100 rounded-lg shadow-md ml-4"> {/* Styled Preview container */}
+                {/* Place the Refresh Preview button here */}
+				<button onClick={refreshPreview} className="mb-2 text-white bg-blue-500 hover:bg-blue-700 font-medium py-2 px-4 rounded">
+                    Refresh Preview
+                </button>
+				<EventPreview {...formdata} />
+            </div>
+		</div>
 	);
 };
 

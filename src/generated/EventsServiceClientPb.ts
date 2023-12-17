@@ -255,5 +255,134 @@ export class EventsClient {
     this.methodDescriptorSubscribeEvent);
   }
 
+  methodDescriptorEditEvent = new grpcWeb.MethodDescriptor(
+    '/social.Events/EditEvent',
+    grpcWeb.MethodType.UNARY,
+    events_pb.EditEventRequest,
+    commons_pb.SocialStatusResponse,
+    (request: events_pb.EditEventRequest) => {
+      return request.serializeBinary();
+    },
+    commons_pb.SocialStatusResponse.deserializeBinary
+  );
+
+  editEvent(
+    request: events_pb.EditEventRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<commons_pb.SocialStatusResponse>;
+
+  editEvent(
+    request: events_pb.EditEventRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: commons_pb.SocialStatusResponse) => void): grpcWeb.ClientReadableStream<commons_pb.SocialStatusResponse>;
+
+  editEvent(
+    request: events_pb.EditEventRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: commons_pb.SocialStatusResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/social.Events/EditEvent',
+        request,
+        metadata || {},
+        this.methodDescriptorEditEvent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/social.Events/EditEvent',
+    request,
+    metadata || {},
+    this.methodDescriptorEditEvent);
+  }
+
+  methodDescriptorUnsubscribeEvent = new grpcWeb.MethodDescriptor(
+    '/social.Events/UnsubscribeEvent',
+    grpcWeb.MethodType.UNARY,
+    events_pb.EventIdRequest,
+    commons_pb.SocialStatusResponse,
+    (request: events_pb.EventIdRequest) => {
+      return request.serializeBinary();
+    },
+    commons_pb.SocialStatusResponse.deserializeBinary
+  );
+
+  unsubscribeEvent(
+    request: events_pb.EventIdRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<commons_pb.SocialStatusResponse>;
+
+  unsubscribeEvent(
+    request: events_pb.EventIdRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: commons_pb.SocialStatusResponse) => void): grpcWeb.ClientReadableStream<commons_pb.SocialStatusResponse>;
+
+  unsubscribeEvent(
+    request: events_pb.EventIdRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: commons_pb.SocialStatusResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/social.Events/UnsubscribeEvent',
+        request,
+        metadata || {},
+        this.methodDescriptorUnsubscribeEvent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/social.Events/UnsubscribeEvent',
+    request,
+    metadata || {},
+    this.methodDescriptorUnsubscribeEvent);
+  }
+
+  methodDescriptorGetEventSubscribers = new grpcWeb.MethodDescriptor(
+    '/social.Events/GetEventSubscribers',
+    grpcWeb.MethodType.UNARY,
+    events_pb.EventIdRequest,
+    events_pb.UserIdList,
+    (request: events_pb.EventIdRequest) => {
+      return request.serializeBinary();
+    },
+    events_pb.UserIdList.deserializeBinary
+  );
+
+  getEventSubscribers(
+    request: events_pb.EventIdRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<events_pb.UserIdList>;
+
+  getEventSubscribers(
+    request: events_pb.EventIdRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: events_pb.UserIdList) => void): grpcWeb.ClientReadableStream<events_pb.UserIdList>;
+
+  getEventSubscribers(
+    request: events_pb.EventIdRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: events_pb.UserIdList) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/social.Events/GetEventSubscribers',
+        request,
+        metadata || {},
+        this.methodDescriptorGetEventSubscribers,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/social.Events/GetEventSubscribers',
+    request,
+    metadata || {},
+    this.methodDescriptorGetEventSubscribers);
+  }
+
 }
 

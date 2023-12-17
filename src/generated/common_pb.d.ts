@@ -119,17 +119,11 @@ export class UserProfileProto extends jspb.Message {
   getYearssinceorganicfarming(): number;
   setYearssinceorganicfarming(value: number): UserProfileProto;
 
-  getDomain(): string;
-  setDomain(value: string): UserProfileProto;
-
   getPreferredlanguage(): string;
   setPreferredlanguage(value: string): UserProfileProto;
 
   getCreatedon(): number;
   setCreatedon(value: number): UserProfileProto;
-
-  getMetadatamap(): string;
-  setMetadatamap(value: string): UserProfileProto;
 
   getAddressesMap(): jspb.Map<string, AddressProto>;
   clearAddressesMap(): UserProfileProto;
@@ -173,10 +167,8 @@ export namespace UserProfileProto {
     cropsList: Array<string>,
     certificationdetails?: CertificationDetails.AsObject,
     yearssinceorganicfarming: number,
-    domain: string,
     preferredlanguage: string,
     createdon: number,
-    metadatamap: string,
     addressesMap: Array<[string, AddressProto.AsObject]>,
     email: string,
     phone: string,

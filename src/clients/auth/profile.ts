@@ -48,9 +48,6 @@ const getCreateProfileRequest = (userProfile: IUserProfile) => {
 	if (userProfile.preferredLanguage) {
 		createProfileRequest.setPreferredlanguage(userProfile.preferredLanguage);
 	}
-	if (userProfile.metaData) {
-		createProfileRequest.setMetadatamap(userProfile.metaData);
-	}
 	return createProfileRequest;
 };
 

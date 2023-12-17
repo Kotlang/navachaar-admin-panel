@@ -43,7 +43,6 @@ const Verify = () => {
 					setAuthResponse(getAuthResponse(response));
 					navigate('/');
 				} else {
-					setAuthResponse(getAuthResponse(response));
 					alert("you don't have admin Access");
 					navigate('/not-admin');
 				}

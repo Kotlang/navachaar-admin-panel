@@ -11,6 +11,7 @@ import {
 } from 'src/generated/commons_pb';
 import {
 	CreateEventRequest,
+	EditEventRequest,
 	EventIdRequest,
 	EventProto
 } from 'src/generated/events_pb';
@@ -30,10 +31,71 @@ export const getEventsClient = (() => {
 	};
 })();
 
+const getEditEventRequest = (event: IEvent) => {
+	const editEventRequest = new EditEventRequest();
+	editEventRequest.setEventid(event.id || '');
+	editEventRequest.setTitle(event.title || '');
+	editEventRequest.setType(event.type || 0);
+	if (typeof event.startAt?.unix === 'function') {
+		editEventRequest.setStartat(event.startAt?.unix());
+	}
+
+	if (typeof event.endAt?.unix === 'function') {
+		editEventRequest.setEndat(event.endAt?.unix());
+	}
+
+	if (event.mediaUrls) {
+		const mediaList: MediaUrl[] = [];
+
+		for (const mediaItem of event.mediaUrls) {
+			const media = new MediaUrl();
+			media.setMimetype(mediaItem.mimeType || '');
+			media.setUrl(mediaItem.url || '');
+
+			mediaList.push(media);
+		}
+
+		editEventRequest.setMediaurlsList(mediaList);
+	}
+
+	if (event.webPreviews) {
+		const webPreviewList: WebPreview[] = [];
+
+		for (const webPreviewItem of event.webPreviews) {
+			const webPR = new WebPreview();
+			webPR.setTitle(webPreviewItem.title || '');
+			webPR.setPreviewimage(webPreviewItem.previewImage || '');
+			webPR.setUrl(webPreviewItem.url || '');
+			webPR.setDescription(webPreviewItem.description || '');
+
+			webPreviewList.push(webPR);
+		}
+
+		editEventRequest.setWebpreviewsList(webPreviewList);
+	}
+
+	editEventRequest.setDescription(event.description || '');
+	editEventRequest.setNumattendees(event.numAttendees || 0);
+	editEventRequest.setNumslots(event.numSlots || 0);
+
+	if (event.location) {
+		const { location } = event;
+		const loc = new Location();
+		loc.setLat(location?.lat || 0);
+		loc.setLong(location?.long || 0);
+		editEventRequest.setLocation(loc);
+	}
+
+	editEventRequest.setOnlinelink(event.onlineLink || '');
+	editEventRequest.setTagsList(event.tags || []);
+
+	return editEventRequest;
+};
+
 const getCreatEventRequest = (event: IEvent) => {
 	const createEventRequest = new CreateEventRequest();
 	createEventRequest.setTitle(event.title || '');
-	createEventRequest.setType(event.type);
+	createEventRequest.setType(event.type || 0);
 
 	if (typeof event.startAt?.unix === 'function') {
 		createEventRequest.setStartat(event.startAt?.unix());
@@ -97,7 +159,6 @@ const EventClient = {
 		metaData: Metadata | null,
 		callback: (err: RpcError, response: EventProto) => void
 	) => {
-		console.log(event);
 		getEventsClient().createEvent(
 			getCreatEventRequest(event),
 			addJwtToken(metaData),
@@ -117,6 +178,19 @@ const EventClient = {
 			callback
 		);
 	},
+
+	EditEvent: (
+		event: IEvent,
+		metaData: Metadata | null,
+		callback: (err: RpcError, response: SocialStatusResponse) => void
+	) => {
+		getEventsClient().editEvent(
+			getEditEventRequest(event),
+			addJwtToken(metaData),
+			callback
+		);
+	},
+
 	GetEvent: (
 		eventID: string,
 		metaData: Metadata | null,

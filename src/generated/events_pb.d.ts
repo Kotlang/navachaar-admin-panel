@@ -48,6 +48,12 @@ export class CreateEventRequest extends jspb.Message {
   clearTagsList(): CreateEventRequest;
   addTags(value: string, index?: number): CreateEventRequest;
 
+  getAuthorname(): string;
+  setAuthorname(value: string): CreateEventRequest;
+
+  getAuthorid(): string;
+  setAuthorid(value: string): CreateEventRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CreateEventRequest.AsObject;
   static toObject(includeInstance: boolean, msg: CreateEventRequest): CreateEventRequest.AsObject;
@@ -70,6 +76,8 @@ export namespace CreateEventRequest {
     location?: commons_pb.Location.AsObject,
     onlinelink: string,
     tagsList: Array<string>,
+    authorname: string,
+    authorid: string,
   }
 }
 
@@ -135,6 +143,14 @@ export class EventProto extends jspb.Message {
   clearFeeduserreactionsList(): EventProto;
   addFeeduserreactions(value: string, index?: number): EventProto;
 
+  getHasfeedusersubscribed(): boolean;
+  setHasfeedusersubscribed(value: boolean): EventProto;
+
+  getAuthorinfo(): commons_pb.SocialProfile | undefined;
+  setAuthorinfo(value?: commons_pb.SocialProfile): EventProto;
+  hasAuthorinfo(): boolean;
+  clearAuthorinfo(): EventProto;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): EventProto.AsObject;
   static toObject(includeInstance: boolean, msg: EventProto): EventProto.AsObject;
@@ -162,6 +178,82 @@ export namespace EventProto {
     mediaurlsList: Array<commons_pb.MediaUrl.AsObject>,
     webpreviewsList: Array<commons_pb.WebPreview.AsObject>,
     feeduserreactionsList: Array<string>,
+    hasfeedusersubscribed: boolean,
+    authorinfo?: commons_pb.SocialProfile.AsObject,
+  }
+}
+
+export class EditEventRequest extends jspb.Message {
+  getEventid(): string;
+  setEventid(value: string): EditEventRequest;
+
+  getTitle(): string;
+  setTitle(value: string): EditEventRequest;
+
+  getType(): EventType;
+  setType(value: EventType): EditEventRequest;
+
+  getStartat(): number;
+  setStartat(value: number): EditEventRequest;
+
+  getEndat(): number;
+  setEndat(value: number): EditEventRequest;
+
+  getMediaurlsList(): Array<commons_pb.MediaUrl>;
+  setMediaurlsList(value: Array<commons_pb.MediaUrl>): EditEventRequest;
+  clearMediaurlsList(): EditEventRequest;
+  addMediaurls(value?: commons_pb.MediaUrl, index?: number): commons_pb.MediaUrl;
+
+  getWebpreviewsList(): Array<commons_pb.WebPreview>;
+  setWebpreviewsList(value: Array<commons_pb.WebPreview>): EditEventRequest;
+  clearWebpreviewsList(): EditEventRequest;
+  addWebpreviews(value?: commons_pb.WebPreview, index?: number): commons_pb.WebPreview;
+
+  getDescription(): string;
+  setDescription(value: string): EditEventRequest;
+
+  getNumattendees(): number;
+  setNumattendees(value: number): EditEventRequest;
+
+  getNumslots(): number;
+  setNumslots(value: number): EditEventRequest;
+
+  getLocation(): commons_pb.Location | undefined;
+  setLocation(value?: commons_pb.Location): EditEventRequest;
+  hasLocation(): boolean;
+  clearLocation(): EditEventRequest;
+
+  getOnlinelink(): string;
+  setOnlinelink(value: string): EditEventRequest;
+
+  getTagsList(): Array<string>;
+  setTagsList(value: Array<string>): EditEventRequest;
+  clearTagsList(): EditEventRequest;
+  addTags(value: string, index?: number): EditEventRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): EditEventRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: EditEventRequest): EditEventRequest.AsObject;
+  static serializeBinaryToWriter(message: EditEventRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): EditEventRequest;
+  static deserializeBinaryFromReader(message: EditEventRequest, reader: jspb.BinaryReader): EditEventRequest;
+}
+
+export namespace EditEventRequest {
+  export type AsObject = {
+    eventid: string,
+    title: string,
+    type: EventType,
+    startat: number,
+    endat: number,
+    mediaurlsList: Array<commons_pb.MediaUrl.AsObject>,
+    webpreviewsList: Array<commons_pb.WebPreview.AsObject>,
+    description: string,
+    numattendees: number,
+    numslots: number,
+    location?: commons_pb.Location.AsObject,
+    onlinelink: string,
+    tagsList: Array<string>,
   }
 }
 
@@ -262,6 +354,26 @@ export namespace EventFeedResponse {
     pagenumber: number,
     pagesize: number,
     totalpages: number,
+  }
+}
+
+export class UserIdList extends jspb.Message {
+  getUseridList(): Array<string>;
+  setUseridList(value: Array<string>): UserIdList;
+  clearUseridList(): UserIdList;
+  addUserid(value: string, index?: number): UserIdList;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UserIdList.AsObject;
+  static toObject(includeInstance: boolean, msg: UserIdList): UserIdList.AsObject;
+  static serializeBinaryToWriter(message: UserIdList, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UserIdList;
+  static deserializeBinaryFromReader(message: UserIdList, reader: jspb.BinaryReader): UserIdList;
+}
+
+export namespace UserIdList {
+  export type AsObject = {
+    useridList: Array<string>,
   }
 }
 

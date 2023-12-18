@@ -1,91 +1,84 @@
 /* eslint-disable */
+
 // Copyright 2022-2023 @Kotlang/navachaar-admin-portal authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
-
-import React, { useEffect,useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { UserPostProto } from 'src/generated/social_pb';
+import PostContainer from './postcontainer';
 import userPostClient from 'src/clients/social/content';
-import { FeedFilters } from 'src/generated/social_pb';
-import { IGetFeedRequest  } from 'src/types';
+import { IGetFeedRequest, FeedFilters } from 'src/types';
+import { resolve } from 'path';
 
-const Posts: React.FC = () => {
-	// const [posts, setPosts] = useState<UserPostProto[]>([]);
-	// const [selectedPost, setSelectedPost] = useState<string | null>(null);
-	// const [comments, setComments] = useState<string[]>([]);
+const PostsPage: React.FC = () => {
+    const [posts, setPosts] = useState<UserPostProto[]>([]);
+    const [pageNumber, setPageNumber] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
 
-	// // Fetch posts when the component mounts
-	// useEffect(() => {
-	// 	const fetchPosts = async () => {
-	// 		try {
-	// 			const feedRequest :IGetFeedRequest = {
-	// 				referencePost: '',
-	// 				pageSize: 10,
-	// 				pageNumber: 1
-	// 			};
-	// 			const response: FeedResponse = await userPostClient.FeedContent(feedRequest, {}, (err, reponse) => {
+    const fetchPosts = useCallback(async (): Promise<UserPostProto[]> => {
+        setHasMore(true);
+        const feedFilters: FeedFilters = {};
+        const feedRequest: IGetFeedRequest = {
+            filters: feedFilters,
+        };
 
-	// 			});
-	// 			setPosts(response.posts);
-	// 		} catch (error) {
-	// 			console.error('Error fetching posts:', error);
-	// 		}
-	// 	};
+        return new Promise((resolve, reject) => {
+            try {
+                userPostClient.FeedContent(feedRequest, null, (err, res) => {
+                    if (err) {
+                        console.error(err);
+                        reject(err);
+                    } else {
+                        const fetchedPosts: UserPostProto[] = res.getPostsList();
+                        resolve(fetchedPosts);
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+                reject(err);
+            }
+        });
+    }, [pageNumber]);
 
-	// 	fetchPosts();
-	// }, []);
 
-	// Fetch comments for the selected post
-	// useEffect(() => {
-	// 	const fetchComments = async (postId: string) => {
-	// 		try {
-	// 			// Use your existing function to fetch comments by postId
-	// 			const commentsResponse = await fetchCommentsFunction(postId); // Replace with your actual function
-	// 			setComments(commentsResponse);
-	// 		} catch (error) {
-	// 			console.error('Error fetching comments:', error);
-	// 		}
-	// 	};
+    useEffect(() => {
+        fetchPosts().then(fetchedPosts => {
+            if (fetchedPosts) {
+                setPosts(fetchedPosts);
+            }
+        }).catch(err => console.error(err));
+    }, [fetchPosts]);
 
-	// 	if (selectedPost) {
-	// 		fetchComments(selectedPost);
-	// 	}
-	// }, [selectedPost]);
+    const handleScroll = useCallback(() => {
+        if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || !hasMore) return;
+        setPageNumber(prevPageNumber => prevPageNumber + 1);
+    }, [hasMore]);
 
-	return (
-		// <div className="container mx-auto mt-4">
-		// 	<h1 className="text-3xl font-semibold mb-4">Posts</h1>
-		// 	<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-		// 		{posts.map((post) => (
-		// 			<div
-		// 				key={post.postId}
-		// 				className={`p-4 border rounded-lg cursor-pointer hover:bg-gray-100 ${
-		// 					selectedPost === post.postId ? 'bg-gray-100' : ''
-		// 				}`}
-		// 				onClick={() => setSelectedPost(post.postId)}
-		// 			>
-		// 				<h2 className="text-xl font-semibold">{post.title}</h2>
-		// 				<p className="text-gray-500">
-        //       Replies: {post.numReplies} | Shares: {post.numShares} | Reactions: {post.numReacts.length}
-		// 				</p>
-		// 			</div>
-		// 		))}
-		// 	</div>
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [handleScroll]);
 
-		// 	{selectedPost && (
-		// 		<div className="mt-8">
-		// 			<h2 className="text-2xl font-semibold mb-4">Comments</h2>
-		// 			<div className="space-y-4">
-		// 				{comments.map((comment, index) => (
-		// 					<div key={index} className="border rounded-lg p-4">
-		// 						<p>{comment}</p>
-		// 					</div>
-		// 				))}
-		// 			</div>
-		// 		</div>
-		// 	)}
-		// </div>
-		<div>hello</div>
-	);
+    return (
+        <div className="overflow-auto p-4" style={{ maxHeight: '100vh', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+            {posts.map((userPosts, index) => (
+                <PostContainer
+                    key={index}
+                    postId={userPosts.getPostid()}
+                    userId={userPosts.getUserid()}
+                    post={userPosts.getPost()}
+                    mediaUrls={userPosts.getMediaurlsList().map(mediaUrl => ({
+                        url: mediaUrl.getUrl(),
+                        mimeType: mediaUrl.getMimetype()
+                    }))}
+                    authorInfo={{
+                        photoUrl: userPosts.getAuthorinfo()?.getPhotourl() || '',
+                        name: userPosts.getAuthorinfo()?.getName() || ''
+                    }}
+                />
+            ))}
+        </div>
+    );
 };
 
-export default Posts;
+export default PostsPage;

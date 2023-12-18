@@ -17,11 +17,9 @@ const MonitorEvent: React.FC = () => {
   const numReactsMap = eventDetails?.getNumreactsMap();
   const numReactsArray = numReactsMap ? numReactsMap.toArray() : [];
 
-
-
-  const fetchCommetsByID = (eventId: string, pageNumber: number, pagesize: number, metaData: Metadata | null): Promise<CommentsFetchResponse> => {
+  const fetchCommetsByID = (eventId: string, metaData: Metadata | null): Promise<CommentsFetchResponse> => {
     return new Promise((resolve, reject) => {
-      clients.social.actions.FetchComments(pagesize, pageNumber, eventId, metaData, (err: RpcError, response: CommentsFetchResponse) => {
+      clients.social.actions.FetchComments(eventId, metaData, (err: RpcError, response: CommentsFetchResponse) => {
         if (err) {
           reject(err);
         } else {
@@ -58,7 +56,7 @@ const MonitorEvent: React.FC = () => {
       const pageNumber = 1;
       const pageSize = 0;
 
-      fetchCommetsByID(eventId, pageNumber, pageSize, {})
+      fetchCommetsByID(eventId, {})
         .then((commnentData) => {
           setComments(commnentData.getCommentsList());
         })

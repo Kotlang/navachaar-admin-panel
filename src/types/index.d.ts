@@ -5,38 +5,39 @@
 import dayjs from 'dayjs';
 import { Gender } from 'src/generated/common_pb';
 import { EventType } from 'src/generated/events_pb';
+
 export interface IUserProfile {
-	attributesList?: string[];
-	createdOn?: number;
-	domain?: string;
-	email?: string;
-	gender?: Gender;
-	loginId?: string;
-	metaData?: string;
-	name?: string;
-	phone?: string;
-	photoUrl?: string;
-	preferredLanguage?: string;
+    attributesList?: string[];
+    createdOn?: number;
+    domain?: string;
+    email?: string;
+    gender?: Gender;
+    loginId?: string;
+    metaData?: string;
+    name?: string;
+    phone?: string;
+    photoUrl?: string;
+    preferredLanguage?: string;
 }
 export interface IAuthResponse {
-	jwt: string;
-	profile: IUserProfile;
-	userType: string;
+    jwt: string;
+    profile: IUserProfile;
+    userType: string;
 }
 
 export interface ILogin {
-	authResponse: IAuthResponse;
-	isLogin: () => boolean;
-	isAdmin: () => boolean;
-	logout: () => void;
+    authResponse: IAuthResponse;
+    isLogin: () => boolean;
+    isAdmin: () => boolean;
+    logout: () => void;
     setAuthResponse: (authResponse: IAuthResponse) => void;
 }
 
 export interface IProfileMaster {
-	language?: string;
-	options?: string[];
-	field?: string;
-	type?: string;
+    language?: string;
+    options?: string[];
+    field?: string;
+    type?: string;
 }
 
 export interface ILabel {
@@ -52,22 +53,22 @@ export interface IEvent {
     startAt?: dayjs.Dayjs;
     endAt?: dayjs.Dayjs;
     mediaUrls?: {
-		url?: string;
-		mimeType?: string;
-	}[];
+        url?: string;
+        mimeType?: string;
+    }[];
     webPreviews?: {
-		title?: string;
-		previewImage?: string;
-		url?: string;
-		description?: string;
-	}[];
+        title?: string;
+        previewImage?: string;
+        url?: string;
+        description?: string;
+    }[];
     description?: string;
     numAttendees?: number;
     numSlots?: number;
     location?: {
-		lat?: number;
-		long?: number;
-	};
+        lat?: number;
+        long?: number;
+    };
     onlineLink?: string;
     tags?: string[];
 }
@@ -107,26 +108,34 @@ export interface EventProto {
     FeedUserReactions: string[];
 }
 
+export interface IUserPost {
+    postId: string,
+    post: string;
+    mediaUrls: MediaUrl[];
+    userId: string;
+    authorInfo: {
+        photoUrl: string;
+        name: string;
+    };
+}
+
 export interface IGetFeedRequest {
-    filters: FeedFilters;
-    referencePost: string;
-    pageSize: number; // int32 in proto
-    pageNumber: number; // int32 in proto
+    filters: FeedFilters
 }
 
 export interface FeedFilters {
-    tag: string;
-    userId: string;
-    createdBy: string;
-    postType: PostType;
-    contentType: string[];
-    type: string[];
-    fetchUserCommentedPosts: boolean;
-    fetchUserReactedPosts: boolean;
+    tag?: string;
+    userId?: string;
+    createdBy?: string;
+    postType?: PostType;
+    contentType?: string[];
+    type?: string[];
+    fetchUserCommentedPosts?: boolean;
+    fetchUserReactedPosts?: boolean;
 }
 
 export enum PostType {
     FEED_POST = 0,
     QNA_QUESTION = 1,
     QNA_ANSWER = 2,
-  }
+}

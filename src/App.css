@@ -3,3 +3,21 @@
     width: calc(100% + 20px); /* Assuming the menu has 10px of padding on each side */
     box-sizing: border-box;
 }
+
+.hide-button {
+    position: sticky;
+    top: 10px; /* Adjust this value according to your desired margin */
+    z-index: 10; /* Ensure it's above other content */
+    background-color: #9b0303; /* Your existing button color, for example, red */
+    /* rest of your styling */
+}
+
+.delete-comment-button {
+    position: absolute;
+    top: 0.25rem; /* Adjust as needed */
+    right: 0.25rem; /* Adjust as needed */
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem; /* Small font size for a small button */
+    /* Additional styling */
+  }
+  

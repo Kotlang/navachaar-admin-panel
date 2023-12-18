@@ -3,6 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import ActionsClient from './actions';
+import userPostClient from './content';
 import EventClient from './event';
 
-export { EventClient, ActionsClient };
+export { EventClient, ActionsClient, userPostClient };

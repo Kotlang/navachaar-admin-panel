@@ -4,7 +4,7 @@
 
 import { loginClient, profileClient, profileMasterClient } from './auth';
 import { adminClient } from './localization';
-import { ActionsClient, EventClient } from './social';
+import { ActionsClient, EventClient, userPostClient } from './social';
 
 const clients = {
 	auth: {
@@ -17,6 +17,7 @@ const clients = {
 	},
 	social: {
 		actions: ActionsClient,
+		content: userPostClient,
 		event : EventClient
 	}
 };

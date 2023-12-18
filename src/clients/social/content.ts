@@ -2,9 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 import { Metadata, RpcError } from 'grpc-web';
-import { FeedFilters, FeedResponse,GetFeedRequest } from 'src/generated/social_pb';
+import { SocialStatusResponse } from 'src/generated/commons_pb';
+import { DeletePostRequest,FeedFilters, FeedResponse,GetFeedRequest } from 'src/generated/social_pb';
+import { PostType } from 'src/generated/social_pb';
 import { UserPostClient } from 'src/generated/SocialServiceClientPb';
-import { IGetFeedRequest, PostType } from 'src/types/index';
+import { IGetFeedRequest } from 'src/types';
+
+import { addJwtToken } from '../utils';
 
 const getUserPostClient = (() => {
 	const socialURL = process.env.REACT_APP_SOCIAL_URL;
@@ -29,21 +33,27 @@ const getFeedRequest = ( feedRequest: IGetFeedRequest ) => {
 		filters.setTypeList(feedRequest.filters.type || []);
 		filters.setFetchusercommentedposts(feedRequest.filters.fetchUserCommentedPosts || false);
 		filters.setFetchuserreactedposts(feedRequest.filters.fetchUserReactedPosts || false);
-
+		'';
 		getfeedRequest.setFilters(filters);
 	}
-
-	getfeedRequest.setReferencepost(feedRequest.referencePost || '');
-	getfeedRequest.setPagesize(feedRequest.pageSize || 10);
-	getfeedRequest.setPagenumber(feedRequest.pageNumber || 1);
 
 	return getfeedRequest;
 };
 
+const getDeletePostRequest = (postid: string) => {
+	const deletePostRequest = new DeletePostRequest();
+	deletePostRequest.setId(postid);
+	return deletePostRequest;
+};
+
 const userPostClient = {
+	DeletePost:(postid: string, metaData: Metadata | null, callback: (err: RpcError, response: SocialStatusResponse) => void) => {
+		getUserPostClient().deletePost(getDeletePostRequest(postid), addJwtToken(metaData), callback);
+	},
 	FeedContent:(feedrequest: IGetFeedRequest, metaData: Metadata | null, callback: (err: RpcError, response: FeedResponse) => void) => {
-		getUserPostClient().getFeed(getFeedRequest(feedrequest), metaData, callback);
+		getUserPostClient().getFeed(getFeedRequest(feedrequest), addJwtToken(metaData), callback);
 	}
+
 };
 
 export default userPostClient;

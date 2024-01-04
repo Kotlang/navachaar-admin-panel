@@ -33,7 +33,6 @@ const getFeedRequest = ( feedRequest: IGetFeedRequest ) => {
 		filters.setTypeList(feedRequest.filters.type || []);
 		filters.setFetchusercommentedposts(feedRequest.filters.fetchUserCommentedPosts || false);
 		filters.setFetchuserreactedposts(feedRequest.filters.fetchUserReactedPosts || false);
-		'';
 		getfeedRequest.setFilters(filters);
 	}
 
@@ -53,7 +52,6 @@ const userPostClient = {
 	FeedContent:(feedrequest: IGetFeedRequest, metaData: Metadata | null, callback: (err: RpcError, response: FeedResponse) => void) => {
 		getUserPostClient().getFeed(getFeedRequest(feedrequest), addJwtToken(metaData), callback);
 	}
-
 };
 
 export default userPostClient;

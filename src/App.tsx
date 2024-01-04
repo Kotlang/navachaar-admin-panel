@@ -16,6 +16,7 @@ import { ThemeProvider } from 'styled-components';
 
 import AppLayout from './components/AppLayout';
 import ContentMiddleware from './routes/content/contentMiddleware';
+import UserMiddleware from './routes/users/usersMiddleware';
 import Events from './Screens/Events';
 import Home from './Screens/Home';
 import Localization from './Screens/Localization';
@@ -41,6 +42,7 @@ function App() {
 							<Route path='/logout' element={<Logout />} />
 							<Route path='/events' element={<Events />} />
 							<Route path='/events/*' element={<EventMiddleware />} />
+							<Route path='/users/*' element={<UserMiddleware />} />
 							<Route path='*' element={<NotFound />} />
 							<Route path='/home' element={<NotFound />} />
 							<Route path='/content/*' element={<ContentMiddleware />} />

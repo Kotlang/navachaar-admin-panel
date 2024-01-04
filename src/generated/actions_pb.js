@@ -1339,8 +1339,9 @@ proto.social.CommentFetchRequest.prototype.toObject = function(opt_includeInstan
 proto.social.CommentFetchRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     parentid: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    pagenumber: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    pagesize: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    userid: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    pagenumber: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    pagesize: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -1382,10 +1383,14 @@ proto.social.CommentFetchRequest.deserializeBinaryFromReader = function(msg, rea
       msg.setParentid(value);
       break;
     case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUserid(value);
+      break;
+    case 3:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setPagenumber(value);
       break;
-    case 3:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setPagesize(value);
       break;
@@ -1425,17 +1430,24 @@ proto.social.CommentFetchRequest.serializeBinaryToWriter = function(message, wri
       f
     );
   }
+  f = message.getUserid();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
   f = message.getPagenumber();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      3,
       f
     );
   }
   f = message.getPagesize();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      4,
       f
     );
   }
@@ -1461,28 +1473,28 @@ proto.social.CommentFetchRequest.prototype.setParentid = function(value) {
 
 
 /**
- * optional int32 pageNumber = 2;
+ * optional string userId = 2;
+ * @return {string}
+ */
+proto.social.CommentFetchRequest.prototype.getUserid = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.social.CommentFetchRequest} returns this
+ */
+proto.social.CommentFetchRequest.prototype.setUserid = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional int32 pageNumber = 3;
  * @return {number}
  */
 proto.social.CommentFetchRequest.prototype.getPagenumber = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.social.CommentFetchRequest} returns this
- */
-proto.social.CommentFetchRequest.prototype.setPagenumber = function(value) {
-  return jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int32 pageSize = 3;
- * @return {number}
- */
-proto.social.CommentFetchRequest.prototype.getPagesize = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
@@ -1491,8 +1503,26 @@ proto.social.CommentFetchRequest.prototype.getPagesize = function() {
  * @param {number} value
  * @return {!proto.social.CommentFetchRequest} returns this
  */
-proto.social.CommentFetchRequest.prototype.setPagesize = function(value) {
+proto.social.CommentFetchRequest.prototype.setPagenumber = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 pageSize = 4;
+ * @return {number}
+ */
+proto.social.CommentFetchRequest.prototype.getPagesize = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.social.CommentFetchRequest} returns this
+ */
+proto.social.CommentFetchRequest.prototype.setPagesize = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 

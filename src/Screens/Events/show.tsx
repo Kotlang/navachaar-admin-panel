@@ -38,24 +38,24 @@ const EventsTable: React.FC = () => {
 
 	const handleConfirmDelete = async (eventId: string) => {
 		try {
-		  // Delete the event
-		  clients.social.event.DeleteEvent(eventId, {}, (err, res) => {
-			if (err) {
-			  console.log(err);
-			} else {
-			  console.log(res.getStatus());
-			  
-			  // Refetch events after deletion
-			  fetchEvents();
-			}
-		  });
+			// Delete the event
+			clients.social.event.DeleteEvent(eventId, {}, (err, res) => {
+				if (err) {
+					console.log(err);
+				} else {
+					console.log(res.getStatus());
+
+					// Refetch events after deletion
+					fetchEvents();
+				}
+			});
 		} catch (error) {
-		  console.error('Error confirming delete:', error);
+			console.error('Error confirming delete:', error);
 		} finally {
-		  setDialogOpen(false);
+			setDialogOpen(false);
 		}
-	  };
-	  
+	};
+
 	// Handler for the Edit button
 	const handleEdit = (event: any) => {
 		navigate(`/events/${event}`);
@@ -87,24 +87,24 @@ const EventsTable: React.FC = () => {
 
 	const fetchEvents = async () => {
 		try {
-		  let allEvents: any[] = [];
-		  for (let i = 0; i < 3; i++) {
-			const filters = new EventFeedFilters();
-			filters.setEventstatus(i);
-			const response = await fetchEventsAsync(0, 0, filters, {});
-			allEvents = allEvents.concat(response.getEventsList());
-		  }
-		  setEvents(allEvents);
+			let allEvents: any[] = [];
+			for (let i = 0; i < 3; i++) {
+				const filters = new EventFeedFilters();
+				filters.setEventstatus(i);
+				const response = await fetchEventsAsync(0, 0, filters, {});
+				allEvents = allEvents.concat(response.getEventsList());
+			}
+			setEvents(allEvents);
 		} catch (err) {
-		  console.error('Error fetching events:', err);
+			console.error('Error fetching events:', err);
 		} finally {
-		  setLoading(false);
+			setLoading(false);
 		}
-	  };
-	  
-	  useEffect(() => {
+	};
+
+	useEffect(() => {
 		fetchEvents();
-	  }, []);
+	}, []);
 
 	if (loading) {
 		return <div>Loading...</div>;
@@ -114,60 +114,62 @@ const EventsTable: React.FC = () => {
 		<div>
 			<h2 className="text-2xl font-semibold text-gray-800 mb-4">Events</h2>
 			<div className="overflow-x-auto shadow-md sm:rounded-lg">
-				<table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-					<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+				<table className="table-auto w-full text-gray-500 dark:text-gray-400 ">
+					<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
 						<tr>
-							<th scope="col" className="px-6 py-3">
+							<th scope="col" className="px-3 py-3">
 								Title
 							</th>
-							<th scope="col" className="px-6 py-3">
+							<th scope="col" className="px-3 py-3">
 								Type
 							</th>
-							<th scope="col" className="px-6 py-3">
+							<th scope="col" className="px-3 py-3">
 								Start At
 							</th>
-							<th scope="col" className="px-6 py-3">
+							<th scope="col" className="px-3 py-3">
 								End At
 							</th>
-							<th scope="col" className="px-6 py-3">
+							<th scope="col" className="px-3 py-3">
 								Attendees
 							</th>
-							<th scope="col" className="px-6 py-3">
+							<th scope="col" className="px-3 py-3">
 								Description
 							</th>
-							<th scope="col" className="px-6 py-3">
+							<th scope="col" className="px-3 py-3">
 								Actions
 							</th>
 						</tr>
 					</thead>
 					<tbody>
 						{events.map((event, index) => (
-							<tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+							<tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 h-full">
 								<td className="px-6 py-4">{event.getTitle()}</td>
 								<td className="px-6 py-4">{event.getType() === 0 ? 'Online' : 'Offline'}</td>
 								<td className="px-6 py-4">{convertUnixTimeToDateTime(event.getStartat())}</td>
 								<td className="px-6 py-4">{convertUnixTimeToDateTime(event.getEndat())}</td>
 								<td className="px-6 py-4">{event.getNumattendees()}</td>
 								<td className="px-6 py-4">{event.getDescription()}</td>
-								<td className="px-6 py-4">
-									<button
-										onClick={() => handleEdit(event.getEventid())}
-										className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-l mr-2"
-									>
-										Edit
-									</button>
-									<button
-										onClick={() => handleMonitor(event.getEventid())}
-										className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-r mr-2"
-									>
-										Monitor
-									</button>
-									<button
-										onClick={() => handleDelete(event)}
-										className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded "
-									>
-										Delete
-									</button>
+								<td className="px-4 py-2 ">
+									<div className='flex flex-row items-center justify-center px-0 py-0'>
+										<button
+											onClick={() => handleEdit(event.getEventid())}
+											className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded mr-2"
+										>
+											Edit
+										</button>
+										<button
+											onClick={() => handleMonitor(event.getEventid())}
+											className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mr-2 "
+										>
+											Monitor
+										</button>
+										<button
+											onClick={() => handleDelete(event)}
+											className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+										>
+											Delete
+										</button>
+									</div>
 
 								</td>
 							</tr>

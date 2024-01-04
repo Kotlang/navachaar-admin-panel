@@ -740,7 +740,7 @@ proto.login.CertificationDetails.prototype.setCertificationagency = function(val
  * @private {!Array<number>}
  * @const
  */
-proto.login.UserProfileProto.repeatedFields_ = [8,17];
+proto.login.UserProfileProto.repeatedFields_ = [8,15];
 
 
 
@@ -786,10 +786,8 @@ proto.login.UserProfileProto.toObject = function(includeInstance, msg) {
     preferredlanguage: jspb.Message.getFieldWithDefault(msg, 12, ""),
     createdon: jspb.Message.getFieldWithDefault(msg, 13, 0),
     addressesMap: (f = msg.getAddressesMap()) ? f.toObject(includeInstance, proto.login.AddressProto.toObject) : [],
-    email: jspb.Message.getFieldWithDefault(msg, 15, ""),
-    phone: jspb.Message.getFieldWithDefault(msg, 16, ""),
-    attributesList: (f = jspb.Message.getRepeatedField(msg, 17)) == null ? undefined : f,
-    landsizeinacres: jspb.Message.getFieldWithDefault(msg, 18, 0),
+    attributesList: (f = jspb.Message.getRepeatedField(msg, 15)) == null ? undefined : f,
+    landsizeinacres: jspb.Message.getFieldWithDefault(msg, 16, 0),
     location: (f = msg.getLocation()) && proto.login.Location.toObject(includeInstance, f)
   };
 
@@ -884,21 +882,13 @@ proto.login.UserProfileProto.deserializeBinaryFromReader = function(msg, reader)
       break;
     case 15:
       var value = /** @type {string} */ (reader.readString());
-      msg.setEmail(value);
-      break;
-    case 16:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setPhone(value);
-      break;
-    case 17:
-      var value = /** @type {string} */ (reader.readString());
       msg.addAttributes(value);
       break;
-    case 18:
+    case 16:
       var value = /** @type {!proto.login.LandSizeInAcres} */ (reader.readEnum());
       msg.setLandsizeinacres(value);
       break;
-    case 19:
+    case 17:
       var value = new proto.login.Location;
       reader.readMessage(value,proto.login.Location.deserializeBinaryFromReader);
       msg.setLocation(value);
@@ -1021,38 +1011,24 @@ proto.login.UserProfileProto.serializeBinaryToWriter = function(message, writer)
   if (f && f.getLength() > 0) {
     f.serializeBinary(14, writer, jspb.BinaryWriter.prototype.writeString, jspb.BinaryWriter.prototype.writeMessage, proto.login.AddressProto.serializeBinaryToWriter);
   }
-  f = message.getEmail();
-  if (f.length > 0) {
-    writer.writeString(
-      15,
-      f
-    );
-  }
-  f = message.getPhone();
-  if (f.length > 0) {
-    writer.writeString(
-      16,
-      f
-    );
-  }
   f = message.getAttributesList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      17,
+      15,
       f
     );
   }
   f = message.getLandsizeinacres();
   if (f !== 0.0) {
     writer.writeEnum(
-      18,
+      16,
       f
     );
   }
   f = message.getLocation();
   if (f != null) {
     writer.writeMessage(
-      19,
+      17,
       f,
       proto.login.Location.serializeBinaryToWriter
     );
@@ -1338,47 +1314,11 @@ proto.login.UserProfileProto.prototype.clearAddressesMap = function() {
 
 
 /**
- * optional string email = 15;
- * @return {string}
- */
-proto.login.UserProfileProto.prototype.getEmail = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 15, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.login.UserProfileProto} returns this
- */
-proto.login.UserProfileProto.prototype.setEmail = function(value) {
-  return jspb.Message.setProto3StringField(this, 15, value);
-};
-
-
-/**
- * optional string phone = 16;
- * @return {string}
- */
-proto.login.UserProfileProto.prototype.getPhone = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 16, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.login.UserProfileProto} returns this
- */
-proto.login.UserProfileProto.prototype.setPhone = function(value) {
-  return jspb.Message.setProto3StringField(this, 16, value);
-};
-
-
-/**
- * repeated string attributes = 17;
+ * repeated string attributes = 15;
  * @return {!Array<string>}
  */
 proto.login.UserProfileProto.prototype.getAttributesList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 17));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 15));
 };
 
 
@@ -1387,7 +1327,7 @@ proto.login.UserProfileProto.prototype.getAttributesList = function() {
  * @return {!proto.login.UserProfileProto} returns this
  */
 proto.login.UserProfileProto.prototype.setAttributesList = function(value) {
-  return jspb.Message.setField(this, 17, value || []);
+  return jspb.Message.setField(this, 15, value || []);
 };
 
 
@@ -1397,7 +1337,7 @@ proto.login.UserProfileProto.prototype.setAttributesList = function(value) {
  * @return {!proto.login.UserProfileProto} returns this
  */
 proto.login.UserProfileProto.prototype.addAttributes = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 17, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 15, value, opt_index);
 };
 
 
@@ -1411,11 +1351,11 @@ proto.login.UserProfileProto.prototype.clearAttributesList = function() {
 
 
 /**
- * optional LandSizeInAcres landSizeInAcres = 18;
+ * optional LandSizeInAcres landSizeInAcres = 16;
  * @return {!proto.login.LandSizeInAcres}
  */
 proto.login.UserProfileProto.prototype.getLandsizeinacres = function() {
-  return /** @type {!proto.login.LandSizeInAcres} */ (jspb.Message.getFieldWithDefault(this, 18, 0));
+  return /** @type {!proto.login.LandSizeInAcres} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
 };
 
 
@@ -1424,17 +1364,17 @@ proto.login.UserProfileProto.prototype.getLandsizeinacres = function() {
  * @return {!proto.login.UserProfileProto} returns this
  */
 proto.login.UserProfileProto.prototype.setLandsizeinacres = function(value) {
-  return jspb.Message.setProto3EnumField(this, 18, value);
+  return jspb.Message.setProto3EnumField(this, 16, value);
 };
 
 
 /**
- * optional Location location = 19;
+ * optional Location location = 17;
  * @return {?proto.login.Location}
  */
 proto.login.UserProfileProto.prototype.getLocation = function() {
   return /** @type{?proto.login.Location} */ (
-    jspb.Message.getWrapperField(this, proto.login.Location, 19));
+    jspb.Message.getWrapperField(this, proto.login.Location, 17));
 };
 
 
@@ -1443,7 +1383,7 @@ proto.login.UserProfileProto.prototype.getLocation = function() {
  * @return {!proto.login.UserProfileProto} returns this
 */
 proto.login.UserProfileProto.prototype.setLocation = function(value) {
-  return jspb.Message.setWrapperField(this, 19, value);
+  return jspb.Message.setWrapperField(this, 17, value);
 };
 
 
@@ -1461,7 +1401,7 @@ proto.login.UserProfileProto.prototype.clearLocation = function() {
  * @return {boolean}
  */
 proto.login.UserProfileProto.prototype.hasLocation = function() {
-  return jspb.Message.getField(this, 19) != null;
+  return jspb.Message.getField(this, 17) != null;
 };
 
 
@@ -1599,27 +1539,29 @@ proto.login.StatusResponse.prototype.setStatus = function(value) {
  * @enum {number}
  */
 proto.login.Gender = {
-  MALE: 0,
-  FEMALE: 1,
-  UNSPECIFIED: 2
+  UNSPECIFIED: 0,
+  MALE: 1,
+  FEMALE: 2
 };
 
 /**
  * @enum {number}
  */
 proto.login.FarmingType = {
-  ORGANIC: 0,
-  CHEMICAL: 1,
-  MIX: 2
+  UNSPECIFIEDFARMING: 0,
+  ORGANIC: 1,
+  CHEMICAL: 2,
+  MIX: 3
 };
 
 /**
  * @enum {number}
  */
 proto.login.LandSizeInAcres = {
-  LESSTHAN2: 0,
-  BETWEEN2AND10: 1,
-  GREATERTHAN10: 2
+  UNSPECIFIEDLANDSIZE: 0,
+  LESSTHAN2: 1,
+  BETWEEN2AND10: 2,
+  GREATERTHAN10: 3
 };
 
 goog.object.extend(exports, proto.login);

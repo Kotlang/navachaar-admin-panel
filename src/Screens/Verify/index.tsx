@@ -44,7 +44,7 @@ const Verify = () => {
 					navigate('/');
 				} else {
 					alert("you don't have admin Access");
-					navigate('/not-admin');
+					navigate('/login');
 				}
 			}
 		});

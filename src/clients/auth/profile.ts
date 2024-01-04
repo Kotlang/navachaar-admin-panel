@@ -7,12 +7,14 @@ import { addJwtToken } from 'src/clients/utils';
 import { UserProfileProto } from 'src/generated/common_pb';
 import {
 	BulkGetProfileRequest,
-	BulkGetProfileResponse,
 	CreateProfileRequest,
-	GetProfileRequest
+	FetchProfilesRequest,
+	IdRequest,
+	ProfileListResponse,
+	Userfilters
 } from 'src/generated/profile_pb';
 import { ProfileClient } from 'src/generated/ProfileServiceClientPb';
-import { IUserProfile } from 'src/types/index';
+import { IFetchProfiles, IUserProfile } from 'src/types/index';
 
 const getProfileClient = (() => {
 	const authURL = process.env.REACT_APP_AUTH_URL;
@@ -51,18 +53,37 @@ const getCreateProfileRequest = (userProfile: IUserProfile) => {
 	return createProfileRequest;
 };
 
+const getFetchProfilesRequest = (fetchprofiles: IFetchProfiles) => {
+	const fetchprofilesrequest = new FetchProfilesRequest();
+	if (fetchprofiles.filters) {
+		const filters = new Userfilters();
+		filters.setFarmingtype(fetchprofiles.filters.farmintType || 0);
+		filters.setGender(fetchprofiles.filters.gender || 0);
+		filters.setLandsizeinacres(fetchprofiles.filters.landSizeInAcres || 0);
+		filters.setName(fetchprofiles.filters.name || '');
+		filters.setYearssinceorganicfarming(fetchprofiles.filters.yearsSinceOrganicFarming || 0);
+		fetchprofilesrequest.setFilters(filters);
+	}
+	fetchprofilesrequest.setPagenumber(fetchprofiles.pageNumber || 0);
+	fetchprofilesrequest.setPagesize(fetchprofiles.pageSize || 0);
+	return fetchprofilesrequest;
+};
+
 const getProfileRequest = (userId: string) => {
-	const profile = new GetProfileRequest();
+	const profile = new IdRequest();
 	profile.setUserid(userId);
 	return profile;
 };
 
 const profileClient = {
-	BulkGetProfileByIds: (userIds: string[], metaData: Metadata | null, callback: (err: RpcError, response: BulkGetProfileResponse) => void) => {
+	BulkGetProfileByIds: (userIds: string[], metaData: Metadata | null, callback: (err: RpcError, response: ProfileListResponse) => void) => {
 		getProfileClient().bulkGetProfileByIds(getBulkProfileRequest(userIds), addJwtToken(metaData), callback);
 	},
 	CreateOrUpdateProfile: (userProfile: IUserProfile, metaData: Metadata | null, callback: (err: RpcError, response: UserProfileProto) => void) => {
 		getProfileClient().createOrUpdateProfile(getCreateProfileRequest(userProfile), addJwtToken(metaData), callback);
+	},
+	FetchProfiles: (fetchprofiles: IFetchProfiles, metaData: Metadata | null, callback: (err: RpcError, reponse: ProfileListResponse) => void) => {
+		getProfileClient().fetchProfiles(getFetchProfilesRequest(fetchprofiles), addJwtToken(metaData), callback);
 	},
 	GetProfileByID: (userId: string, metaData: Metadata | null, callback: (err: RpcError, response: UserProfileProto) => void) => {
 		getProfileClient().getProfileById(getProfileRequest(userId), addJwtToken(metaData), callback);

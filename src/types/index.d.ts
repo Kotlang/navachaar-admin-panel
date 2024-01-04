@@ -3,7 +3,7 @@
 // of the Apache-2.0 license. See the LICENSE file for details.
 
 import dayjs from 'dayjs';
-import { Gender } from 'src/generated/common_pb';
+import { FarmingType, Gender, LandSizeInAcres } from 'src/generated/common_pb';
 import { EventType } from 'src/generated/events_pb';
 
 export interface IUserProfile {
@@ -18,7 +18,27 @@ export interface IUserProfile {
     phone?: string;
     photoUrl?: string;
     preferredLanguage?: string;
+    isVerified?: boolean;
+    gender?: Gender;
+    farmintType?: FarmingType;
+    yearsSinceOrganicFarming?: number;
+    landSizeInAcres?: LandSizeInAcres;
 }
+
+export interface UserFilters {
+    name?: string;
+    gender?: Gender;
+    farmintType?: FarmingType;
+    yearsSinceOrganicFarming?: number;
+    landSizeInAcres?: LandSizeInAcres;
+}
+
+export interface IFetchProfiles {
+    filters?: UserFilters;
+    pageSize?: number;
+    pageNumber?: number;
+}
+
 export interface IAuthResponse {
     jwt: string;
     profile: IUserProfile;
@@ -52,10 +72,7 @@ export interface IEvent {
     type?: EventType;
     startAt?: dayjs.Dayjs;
     endAt?: dayjs.Dayjs;
-    mediaUrls?: {
-        url?: string;
-        mimeType?: string;
-    }[];
+    mediaUrls?: MediaUrl[];
     webPreviews?: {
         title?: string;
         previewImage?: string;

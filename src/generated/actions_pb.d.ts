@@ -155,6 +155,9 @@ export class CommentFetchRequest extends jspb.Message {
   getParentid(): string;
   setParentid(value: string): CommentFetchRequest;
 
+  getUserid(): string;
+  setUserid(value: string): CommentFetchRequest;
+
   getPagenumber(): number;
   setPagenumber(value: number): CommentFetchRequest;
 
@@ -172,6 +175,7 @@ export class CommentFetchRequest extends jspb.Message {
 export namespace CommentFetchRequest {
   export type AsObject = {
     parentid: string,
+    userid: string,
     pagenumber: number,
     pagesize: number,
   }

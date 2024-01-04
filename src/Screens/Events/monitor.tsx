@@ -19,15 +19,20 @@ const MonitorEvent: React.FC = () => {
 
   const fetchCommetsByID = (eventId: string, metaData: Metadata | null): Promise<CommentsFetchResponse> => {
     return new Promise((resolve, reject) => {
-      clients.social.actions.FetchComments(eventId, metaData, (err: RpcError, response: CommentsFetchResponse) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(response);
+      clients.social.actions.FetchComments({
+        parentID: eventId,
+        metaData: metaData,
+        callback: (err: RpcError, response: CommentsFetchResponse) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(response);
+          }
         }
-      })
-    })
+      });
+    });
   }
+
 
   const fetchEventById = (eventId: string, metaData: Metadata | null): Promise<EventProto> => {
     return new Promise((resolve, reject) => {
@@ -41,30 +46,45 @@ const MonitorEvent: React.FC = () => {
     });
   };
 
-  useEffect(() => {
+  const fetchData = () => {
     if (eventId) {
       fetchEventById(eventId, {})
         .then((eventData) => {
           setEventDetails(eventData);
-          setLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching event:', error);
         });
 
-      // Fetchcomments 
+      // Fetch comments
       const pageNumber = 1;
       const pageSize = 0;
 
       fetchCommetsByID(eventId, {})
-        .then((commnentData) => {
-          setComments(commnentData.getCommentsList());
+        .then((commentData) => {
+          setComments(commentData.getCommentsList());
         })
         .catch((err) => {
           console.error('Error fetching comments')
         })
     }
-  })
+  };
+  console.log(eventId)
+  useEffect(() => {
+    fetchData();
+    const intervalId = setInterval(fetchData, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [eventId]);
+
+  useEffect(() => {
+    if (eventDetails) {
+      setLoading(false);
+    }
+  }, [eventDetails]);
+
 
   if (loading) return <div>Loading...</div>;
 

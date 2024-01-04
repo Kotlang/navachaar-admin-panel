@@ -5,5 +5,6 @@
 import ActionsClient from './actions';
 import userPostClient from './content';
 import EventClient from './event';
+import socialStatsClient from './stats';
 
-export { EventClient, ActionsClient, userPostClient };
+export { EventClient, ActionsClient, userPostClient, socialStatsClient };

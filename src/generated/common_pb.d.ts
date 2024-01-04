@@ -128,12 +128,6 @@ export class UserProfileProto extends jspb.Message {
   getAddressesMap(): jspb.Map<string, AddressProto>;
   clearAddressesMap(): UserProfileProto;
 
-  getEmail(): string;
-  setEmail(value: string): UserProfileProto;
-
-  getPhone(): string;
-  setPhone(value: string): UserProfileProto;
-
   getAttributesList(): Array<string>;
   setAttributesList(value: Array<string>): UserProfileProto;
   clearAttributesList(): UserProfileProto;
@@ -170,8 +164,6 @@ export namespace UserProfileProto {
     preferredlanguage: string,
     createdon: number,
     addressesMap: Array<[string, AddressProto.AsObject]>,
-    email: string,
-    phone: string,
     attributesList: Array<string>,
     landsizeinacres: LandSizeInAcres,
     location?: Location.AsObject,
@@ -197,17 +189,19 @@ export namespace StatusResponse {
 }
 
 export enum Gender { 
-  MALE = 0,
-  FEMALE = 1,
-  UNSPECIFIED = 2,
+  UNSPECIFIED = 0,
+  MALE = 1,
+  FEMALE = 2,
 }
 export enum FarmingType { 
-  ORGANIC = 0,
-  CHEMICAL = 1,
-  MIX = 2,
+  UNSPECIFIEDFARMING = 0,
+  ORGANIC = 1,
+  CHEMICAL = 2,
+  MIX = 3,
 }
 export enum LandSizeInAcres { 
-  LESSTHAN2 = 0,
-  BETWEEN2AND10 = 1,
-  GREATERTHAN10 = 2,
+  UNSPECIFIEDLANDSIZE = 0,
+  LESSTHAN2 = 1,
+  BETWEEN2AND10 = 2,
+  GREATERTHAN10 = 3,
 }

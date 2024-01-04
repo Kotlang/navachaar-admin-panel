@@ -77,19 +77,101 @@ export namespace CreateProfileRequest {
   }
 }
 
-export class GetProfileRequest extends jspb.Message {
-  getUserid(): string;
-  setUserid(value: string): GetProfileRequest;
+export class Userfilters extends jspb.Message {
+  getName(): string;
+  setName(value: string): Userfilters;
+
+  getGender(): common_pb.Gender;
+  setGender(value: common_pb.Gender): Userfilters;
+
+  getFarmingtype(): common_pb.FarmingType;
+  setFarmingtype(value: common_pb.FarmingType): Userfilters;
+
+  getYearssinceorganicfarming(): number;
+  setYearssinceorganicfarming(value: number): Userfilters;
+
+  getLandsizeinacres(): common_pb.LandSizeInAcres;
+  setLandsizeinacres(value: common_pb.LandSizeInAcres): Userfilters;
 
   serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): GetProfileRequest.AsObject;
-  static toObject(includeInstance: boolean, msg: GetProfileRequest): GetProfileRequest.AsObject;
-  static serializeBinaryToWriter(message: GetProfileRequest, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): GetProfileRequest;
-  static deserializeBinaryFromReader(message: GetProfileRequest, reader: jspb.BinaryReader): GetProfileRequest;
+  toObject(includeInstance?: boolean): Userfilters.AsObject;
+  static toObject(includeInstance: boolean, msg: Userfilters): Userfilters.AsObject;
+  static serializeBinaryToWriter(message: Userfilters, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Userfilters;
+  static deserializeBinaryFromReader(message: Userfilters, reader: jspb.BinaryReader): Userfilters;
 }
 
-export namespace GetProfileRequest {
+export namespace Userfilters {
+  export type AsObject = {
+    name: string,
+    gender: common_pb.Gender,
+    farmingtype: common_pb.FarmingType,
+    yearssinceorganicfarming: number,
+    landsizeinacres: common_pb.LandSizeInAcres,
+  }
+}
+
+export class FetchProfilesRequest extends jspb.Message {
+  getFilters(): Userfilters | undefined;
+  setFilters(value?: Userfilters): FetchProfilesRequest;
+  hasFilters(): boolean;
+  clearFilters(): FetchProfilesRequest;
+
+  getPagesize(): number;
+  setPagesize(value: number): FetchProfilesRequest;
+
+  getPagenumber(): number;
+  setPagenumber(value: number): FetchProfilesRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): FetchProfilesRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: FetchProfilesRequest): FetchProfilesRequest.AsObject;
+  static serializeBinaryToWriter(message: FetchProfilesRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): FetchProfilesRequest;
+  static deserializeBinaryFromReader(message: FetchProfilesRequest, reader: jspb.BinaryReader): FetchProfilesRequest;
+}
+
+export namespace FetchProfilesRequest {
+  export type AsObject = {
+    filters?: Userfilters.AsObject,
+    pagesize: number,
+    pagenumber: number,
+  }
+}
+
+export class ProfileListResponse extends jspb.Message {
+  getProfilesList(): Array<common_pb.UserProfileProto>;
+  setProfilesList(value: Array<common_pb.UserProfileProto>): ProfileListResponse;
+  clearProfilesList(): ProfileListResponse;
+  addProfiles(value?: common_pb.UserProfileProto, index?: number): common_pb.UserProfileProto;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ProfileListResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ProfileListResponse): ProfileListResponse.AsObject;
+  static serializeBinaryToWriter(message: ProfileListResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ProfileListResponse;
+  static deserializeBinaryFromReader(message: ProfileListResponse, reader: jspb.BinaryReader): ProfileListResponse;
+}
+
+export namespace ProfileListResponse {
+  export type AsObject = {
+    profilesList: Array<common_pb.UserProfileProto.AsObject>,
+  }
+}
+
+export class IdRequest extends jspb.Message {
+  getUserid(): string;
+  setUserid(value: string): IdRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): IdRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: IdRequest): IdRequest.AsObject;
+  static serializeBinaryToWriter(message: IdRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): IdRequest;
+  static deserializeBinaryFromReader(message: IdRequest, reader: jspb.BinaryReader): IdRequest;
+}
+
+export namespace IdRequest {
   export type AsObject = {
     userid: string,
   }
@@ -235,26 +317,6 @@ export namespace BulkGetProfileRequest {
   }
 }
 
-export class BulkGetProfileResponse extends jspb.Message {
-  getProfilesList(): Array<common_pb.UserProfileProto>;
-  setProfilesList(value: Array<common_pb.UserProfileProto>): BulkGetProfileResponse;
-  clearProfilesList(): BulkGetProfileResponse;
-  addProfiles(value?: common_pb.UserProfileProto, index?: number): common_pb.UserProfileProto;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): BulkGetProfileResponse.AsObject;
-  static toObject(includeInstance: boolean, msg: BulkGetProfileResponse): BulkGetProfileResponse.AsObject;
-  static serializeBinaryToWriter(message: BulkGetProfileResponse, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): BulkGetProfileResponse;
-  static deserializeBinaryFromReader(message: BulkGetProfileResponse, reader: jspb.BinaryReader): BulkGetProfileResponse;
-}
-
-export namespace BulkGetProfileResponse {
-  export type AsObject = {
-    profilesList: Array<common_pb.UserProfileProto.AsObject>,
-  }
-}
-
 export class GetProfileByPhoneOrEmailRequest extends jspb.Message {
   getPhone(): string;
   setPhone(value: string): GetProfileByPhoneOrEmailRequest;
@@ -274,6 +336,24 @@ export namespace GetProfileByPhoneOrEmailRequest {
   export type AsObject = {
     phone: string,
     email: string,
+  }
+}
+
+export class IsUserAdminResponse extends jspb.Message {
+  getIsadmin(): boolean;
+  setIsadmin(value: boolean): IsUserAdminResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): IsUserAdminResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: IsUserAdminResponse): IsUserAdminResponse.AsObject;
+  static serializeBinaryToWriter(message: IsUserAdminResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): IsUserAdminResponse;
+  static deserializeBinaryFromReader(message: IsUserAdminResponse, reader: jspb.BinaryReader): IsUserAdminResponse;
+}
+
+export namespace IsUserAdminResponse {
+  export type AsObject = {
+    isadmin: boolean,
   }
 }
 

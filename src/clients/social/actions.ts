@@ -19,16 +19,23 @@ export const getActionsClient = (() => {
 	};
 })();
 
-const getDeleteCommentRequest = (commentId: string) => {
-	const deleteRequest = new IdRequest();
-	deleteRequest.setId(commentId);
+const getIdRequest = (commentId: string) => {
+	const idRequest = new IdRequest();
+	idRequest.setId(commentId);
 
-	return deleteRequest;
+	return idRequest;
 };
 
-const getCommentFetchRequest = (parentID: string) => {
+const getCommentFetchRequest = (parentID?: string, userId?: string) => {
 	const commentReq = new CommentFetchRequest();
-	commentReq.setParentid(parentID);
+
+	if (parentID) {
+		commentReq.setParentid(parentID);
+	}
+
+	if (userId) {
+		commentReq.setUserid(userId);
+	}
 
 	return commentReq;
 };
@@ -39,17 +46,22 @@ const ActionsClient = {
 		metaData: Metadata | null,
 		callback: (err: RpcError, response: SocialStatusResponse) => void
 	) => {
-		getActionsClient().deleteComment(getDeleteCommentRequest(parentID), addJwtToken(metaData), callback);
+		getActionsClient().deleteComment(getIdRequest(parentID), addJwtToken(metaData), callback);
 	},
 
-	FetchComments: (
-		parentID: string,
+	FetchComments: ({
+		parentID,
+		userID,
+		metaData,
+		callback
+	}: {
+		parentID?: string,
+		userID?: string,
 		metaData: Metadata | null,
 		callback: (err: RpcError, response: CommentsFetchResponse) => void
-	) => {
-		getActionsClient().fetchComments(getCommentFetchRequest(parentID), addJwtToken(metaData), callback);
+	}) => {
+		getActionsClient().fetchComments(getCommentFetchRequest(parentID, userID), addJwtToken(metaData), callback);
 	}
-
 };
 
 export default ActionsClient;

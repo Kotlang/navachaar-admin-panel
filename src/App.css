@@ -20,4 +20,18 @@
     font-size: 0.75rem; /* Small font size for a small button */
     /* Additional styling */
   }
-  
+
+  .custom-grid-cols {
+    grid-template-columns: 1fr 7fr; /* Adjust the fraction as per your requirement */
+}
+
+.verified-status {
+    display: inline-block; /* Makes the element inline but still block-like */
+    padding: .2em .6em; /* Example padding; adjust as needed */
+    font-weight: bold;
+    color: #fff; /* Adjust text color as needed */
+    background-color: #d9534f; /* Adjust background color as needed */
+    border-radius: .25em; /* Optional: Rounds the corners of the background */
+    text-align: center;
+}
+

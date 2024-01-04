@@ -8,7 +8,6 @@ import { UserPostProto } from 'src/generated/social_pb';
 import PostContainer from './postcontainer';
 import userPostClient from 'src/clients/social/content';
 import { IGetFeedRequest, FeedFilters } from 'src/types';
-import { resolve } from 'path';
 
 const PostsPage: React.FC = () => {
     const [posts, setPosts] = useState<UserPostProto[]>([]);

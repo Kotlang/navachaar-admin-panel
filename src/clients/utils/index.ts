@@ -21,11 +21,9 @@ const getUserProfile: (userProfileProto: UserProfileProto) => IUserProfile = (us
 	return {
 		attributesList: userProfileProto.getAttributesList(),
 		createdOn: userProfileProto.getCreatedon(),
-		email: userProfileProto.getEmail(),
 		gender: userProfileProto.getGender(),
 		loginId: userProfileProto.getLoginid(),
 		name: userProfileProto.getName(),
-		phone: userProfileProto.getPhone(),
 		photoUrl: userProfileProto.getPhotourl(),
 		preferredLanguage: userProfileProto.getPreferredlanguage()
 	};

@@ -19,15 +19,20 @@ const PostContainer: React.FC<IUserPost> = (Posts) => {
 
   const fetchCommetsByID = (eventId: string, metaData: Metadata | null): Promise<CommentsFetchResponse> => {
     return new Promise((resolve, reject) => {
-      clients.social.actions.FetchComments(eventId, metaData, (err: RpcError, response: CommentsFetchResponse) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(response);
+      clients.social.actions.FetchComments({
+        parentID: eventId, // Assuming eventId is used as parentID
+        metaData: metaData,
+        callback: (err: RpcError, response: CommentsFetchResponse) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(response);
+          }
         }
-      })
-    })
+      });
+    });
   }
+
 
   const handleCommentDelete = (commendId: string) => {
     clients.social.actions.DeleteComments(commendId, null, (err, res) => {

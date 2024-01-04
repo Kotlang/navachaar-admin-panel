@@ -29,6 +29,10 @@ const menuItems = [
 		title: 'Posts'
 	},
 	{
+		key: '/users',
+		title: 'Users'
+	},
+	{
 		key: '/profile-master',
 		title: 'Profile Master'
 	},

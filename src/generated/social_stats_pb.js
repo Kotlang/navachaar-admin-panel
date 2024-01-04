@@ -229,7 +229,10 @@ proto.social.GetStatsResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     followerscount: jspb.Message.getFieldWithDefault(msg, 1, 0),
     followingcount: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    postscount: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    postscount: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    reactcount: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    commentscount: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    eventscount: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -278,6 +281,18 @@ proto.social.GetStatsResponse.deserializeBinaryFromReader = function(msg, reader
       var value = /** @type {number} */ (reader.readInt32());
       msg.setPostscount(value);
       break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setReactcount(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setCommentscount(value);
+      break;
+    case 6:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setEventscount(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -325,6 +340,27 @@ proto.social.GetStatsResponse.serializeBinaryToWriter = function(message, writer
   if (f !== 0) {
     writer.writeInt32(
       3,
+      f
+    );
+  }
+  f = message.getReactcount();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
+  f = message.getCommentscount();
+  if (f !== 0) {
+    writer.writeInt32(
+      5,
+      f
+    );
+  }
+  f = message.getEventscount();
+  if (f !== 0) {
+    writer.writeInt32(
+      6,
       f
     );
   }
@@ -382,6 +418,60 @@ proto.social.GetStatsResponse.prototype.getPostscount = function() {
  */
 proto.social.GetStatsResponse.prototype.setPostscount = function(value) {
   return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 reactCount = 4;
+ * @return {number}
+ */
+proto.social.GetStatsResponse.prototype.getReactcount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.social.GetStatsResponse} returns this
+ */
+proto.social.GetStatsResponse.prototype.setReactcount = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 commentsCount = 5;
+ * @return {number}
+ */
+proto.social.GetStatsResponse.prototype.getCommentscount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.social.GetStatsResponse} returns this
+ */
+proto.social.GetStatsResponse.prototype.setCommentscount = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
+};
+
+
+/**
+ * optional int32 eventsCount = 6;
+ * @return {number}
+ */
+proto.social.GetStatsResponse.prototype.getEventscount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.social.GetStatsResponse} returns this
+ */
+proto.social.GetStatsResponse.prototype.setEventscount = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 

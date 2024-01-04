@@ -86,26 +86,26 @@ export class ProfileClient {
   methodDescriptorgetProfileById = new grpcWeb.MethodDescriptor(
     '/login.Profile/getProfileById',
     grpcWeb.MethodType.UNARY,
-    profile_pb.GetProfileRequest,
+    profile_pb.IdRequest,
     common_pb.UserProfileProto,
-    (request: profile_pb.GetProfileRequest) => {
+    (request: profile_pb.IdRequest) => {
       return request.serializeBinary();
     },
     common_pb.UserProfileProto.deserializeBinary
   );
 
   getProfileById(
-    request: profile_pb.GetProfileRequest,
+    request: profile_pb.IdRequest,
     metadata?: grpcWeb.Metadata | null): Promise<common_pb.UserProfileProto>;
 
   getProfileById(
-    request: profile_pb.GetProfileRequest,
+    request: profile_pb.IdRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
                response: common_pb.UserProfileProto) => void): grpcWeb.ClientReadableStream<common_pb.UserProfileProto>;
 
   getProfileById(
-    request: profile_pb.GetProfileRequest,
+    request: profile_pb.IdRequest,
     metadata?: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
                response: common_pb.UserProfileProto) => void) {
@@ -130,28 +130,28 @@ export class ProfileClient {
     '/login.Profile/bulkGetProfileByIds',
     grpcWeb.MethodType.UNARY,
     profile_pb.BulkGetProfileRequest,
-    profile_pb.BulkGetProfileResponse,
+    profile_pb.ProfileListResponse,
     (request: profile_pb.BulkGetProfileRequest) => {
       return request.serializeBinary();
     },
-    profile_pb.BulkGetProfileResponse.deserializeBinary
+    profile_pb.ProfileListResponse.deserializeBinary
   );
 
   bulkGetProfileByIds(
     request: profile_pb.BulkGetProfileRequest,
-    metadata?: grpcWeb.Metadata | null): Promise<profile_pb.BulkGetProfileResponse>;
+    metadata?: grpcWeb.Metadata | null): Promise<profile_pb.ProfileListResponse>;
 
   bulkGetProfileByIds(
     request: profile_pb.BulkGetProfileRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: profile_pb.BulkGetProfileResponse) => void): grpcWeb.ClientReadableStream<profile_pb.BulkGetProfileResponse>;
+               response: profile_pb.ProfileListResponse) => void): grpcWeb.ClientReadableStream<profile_pb.ProfileListResponse>;
 
   bulkGetProfileByIds(
     request: profile_pb.BulkGetProfileRequest,
     metadata?: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: profile_pb.BulkGetProfileResponse) => void) {
+               response: profile_pb.ProfileListResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
@@ -296,6 +296,92 @@ export class ProfileClient {
     request,
     metadata || {},
     this.methodDescriptorgetProfileByPhoneOrEmail);
+  }
+
+  methodDescriptorisUserAdmin = new grpcWeb.MethodDescriptor(
+    '/login.Profile/isUserAdmin',
+    grpcWeb.MethodType.UNARY,
+    profile_pb.IdRequest,
+    profile_pb.IsUserAdminResponse,
+    (request: profile_pb.IdRequest) => {
+      return request.serializeBinary();
+    },
+    profile_pb.IsUserAdminResponse.deserializeBinary
+  );
+
+  isUserAdmin(
+    request: profile_pb.IdRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<profile_pb.IsUserAdminResponse>;
+
+  isUserAdmin(
+    request: profile_pb.IdRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: profile_pb.IsUserAdminResponse) => void): grpcWeb.ClientReadableStream<profile_pb.IsUserAdminResponse>;
+
+  isUserAdmin(
+    request: profile_pb.IdRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: profile_pb.IsUserAdminResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/login.Profile/isUserAdmin',
+        request,
+        metadata || {},
+        this.methodDescriptorisUserAdmin,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/login.Profile/isUserAdmin',
+    request,
+    metadata || {},
+    this.methodDescriptorisUserAdmin);
+  }
+
+  methodDescriptorFetchProfiles = new grpcWeb.MethodDescriptor(
+    '/login.Profile/FetchProfiles',
+    grpcWeb.MethodType.UNARY,
+    profile_pb.FetchProfilesRequest,
+    profile_pb.ProfileListResponse,
+    (request: profile_pb.FetchProfilesRequest) => {
+      return request.serializeBinary();
+    },
+    profile_pb.ProfileListResponse.deserializeBinary
+  );
+
+  fetchProfiles(
+    request: profile_pb.FetchProfilesRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<profile_pb.ProfileListResponse>;
+
+  fetchProfiles(
+    request: profile_pb.FetchProfilesRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: profile_pb.ProfileListResponse) => void): grpcWeb.ClientReadableStream<profile_pb.ProfileListResponse>;
+
+  fetchProfiles(
+    request: profile_pb.FetchProfilesRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: profile_pb.ProfileListResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/login.Profile/FetchProfiles',
+        request,
+        metadata || {},
+        this.methodDescriptorFetchProfiles,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/login.Profile/FetchProfiles',
+    request,
+    metadata || {},
+    this.methodDescriptorFetchProfiles);
   }
 
 }

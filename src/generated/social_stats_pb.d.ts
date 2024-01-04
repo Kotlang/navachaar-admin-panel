@@ -30,6 +30,15 @@ export class GetStatsResponse extends jspb.Message {
   getPostscount(): number;
   setPostscount(value: number): GetStatsResponse;
 
+  getReactcount(): number;
+  setReactcount(value: number): GetStatsResponse;
+
+  getCommentscount(): number;
+  setCommentscount(value: number): GetStatsResponse;
+
+  getEventscount(): number;
+  setEventscount(value: number): GetStatsResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetStatsResponse.AsObject;
   static toObject(includeInstance: boolean, msg: GetStatsResponse): GetStatsResponse.AsObject;
@@ -43,6 +52,9 @@ export namespace GetStatsResponse {
     followerscount: number,
     followingcount: number,
     postscount: number,
+    reactcount: number,
+    commentscount: number,
+    eventscount: number,
   }
 }
 

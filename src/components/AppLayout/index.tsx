@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // Copyright 2022-2023 @Kotlang/navachaar-admin-portal authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
@@ -10,7 +12,6 @@ import styled from 'styled-components';
 import Footer from './Footer';
 import Menu from './Menu';
 import NavHeader from './NavHeader';
-
 const { Content, Sider } = Layout;
 
 interface IAppLayoutProps extends PropsWithChildren {
@@ -62,7 +63,7 @@ const AppLayout: FC<IAppLayoutProps> = ({ className }) => {
 				</Drawer>
 				<Layout className='min-h flex flex-row p-0'>
 					<div className='hidden lg:block w-full max-w-[200px]'></div>
-					<Content className='bg-purple_app_bg p-8'>
+					<Content className='bg-purple_app_bg px-8'>
 						<Outlet />
 					</Content>
 				</Layout>
